@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { ProjectCard } from "@/components/ProjectCard";
 import { countries, crops, projects } from "@/data/projects";
 
-export const Route = createFileRoute("/proyectos")({
+export const Route = createFileRoute("/proyectos/")({
   head: () => ({
     meta: [
       { title: "Proyectos · DeRaíz" },
