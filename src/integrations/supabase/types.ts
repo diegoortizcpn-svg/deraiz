@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      kyc_verifications: {
+        Row: {
+          created_at: string
+          didit_session_id: string | null
+          id: string
+          status: string
+          updated_at: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          didit_session_id?: string | null
+          id?: string
+          status?: string
+          updated_at?: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          didit_session_id?: string | null
+          id?: string
+          status?: string
+          updated_at?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      token_claims: {
+        Row: {
+          amount: number
+          asset_code: string
+          created_at: string
+          id: string
+          tx_hash: string | null
+          wallet_address: string
+        }
+        Insert: {
+          amount?: number
+          asset_code: string
+          created_at?: string
+          id?: string
+          tx_hash?: string | null
+          wallet_address: string
+        }
+        Update: {
+          amount?: number
+          asset_code?: string
+          created_at?: string
+          id?: string
+          tx_hash?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
