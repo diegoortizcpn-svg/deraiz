@@ -10,33 +10,80 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ComplianceRouteImport } from './routes/compliance'
+import { Route as MiCuentaRouteImport } from './routes/mi-cuenta'
+import { Route as ProyectosIndexRouteImport } from './routes/proyectos.index'
+import { Route as ProyectosSlugRouteImport } from './routes/proyectos.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComplianceRoute = ComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MiCuentaRoute = MiCuentaRouteImport.update({
+  id: '/mi-cuenta',
+  path: '/mi-cuenta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProyectosIndexRoute = ProyectosIndexRouteImport.update({
+  id: '/proyectos/',
+  path: '/proyectos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProyectosSlugRoute = ProyectosSlugRouteImport.update({
+  id: '/proyectos/$slug',
+  path: '/proyectos/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/compliance': typeof ComplianceRoute
+  '/mi-cuenta': typeof MiCuentaRoute
+  '/proyectos/$slug': typeof ProyectosSlugRoute
+  '/proyectos/': typeof ProyectosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/compliance': typeof ComplianceRoute
+  '/mi-cuenta': typeof MiCuentaRoute
+  '/proyectos/$slug': typeof ProyectosSlugRoute
+  '/proyectos': typeof ProyectosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/compliance': typeof ComplianceRoute
+  '/mi-cuenta': typeof MiCuentaRoute
+  '/proyectos/$slug': typeof ProyectosSlugRoute
+  '/proyectos/': typeof ProyectosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/compliance' | '/mi-cuenta' | '/proyectos/$slug' | '/proyectos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/compliance' | '/mi-cuenta' | '/proyectos/$slug' | '/proyectos'
+  id:
+    | '__root__'
+    | '/'
+    | '/compliance'
+    | '/mi-cuenta'
+    | '/proyectos/$slug'
+    | '/proyectos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ComplianceRoute: typeof ComplianceRoute
+  MiCuentaRoute: typeof MiCuentaRoute
+  ProyectosSlugRoute: typeof ProyectosSlugRoute
+  ProyectosIndexRoute: typeof ProyectosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +95,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compliance': {
+      id: '/compliance'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof ComplianceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mi-cuenta': {
+      id: '/mi-cuenta'
+      path: '/mi-cuenta'
+      fullPath: '/mi-cuenta'
+      preLoaderRoute: typeof MiCuentaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proyectos/': {
+      id: '/proyectos/'
+      path: '/proyectos'
+      fullPath: '/proyectos/'
+      preLoaderRoute: typeof ProyectosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proyectos/$slug': {
+      id: '/proyectos/$slug'
+      path: '/proyectos/$slug'
+      fullPath: '/proyectos/$slug'
+      preLoaderRoute: typeof ProyectosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ComplianceRoute: ComplianceRoute,
+  MiCuentaRoute: MiCuentaRoute,
+  ProyectosSlugRoute: ProyectosSlugRoute,
+  ProyectosIndexRoute: ProyectosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
