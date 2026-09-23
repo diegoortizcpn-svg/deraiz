@@ -23,13 +23,13 @@ export async function claimTokens(
     .maybeSingle();
 
   if (error) {
-    if (error.code === "23505" || error.code === "23514" || error.code === "23000" || error.code === "23503") {
-      return { ok: false, message: "No se pudo registrar el reclamo." };
+    if (error.code === "23505") {
+      return {
+        ok: false,
+        message: "Esta wallet ya reclamó los tokens de prueba de este proyecto.",
+      };
     }
-    if (error.code === "23505" || error.message.includes("duplicate")) {
-      return { ok: false, message: "Esta wallet ya reclamó los tokens de prueba de este proyecto." };
-    }
-    return { ok: false, message: error.message };
+    return { ok: false, message: "No se pudo registrar el reclamo de tokens de prueba." };
   }
 
   return {
