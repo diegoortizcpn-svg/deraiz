@@ -42,6 +42,7 @@ export function ParticipationPanel({ project }: { project: Project }) {
   const { address, isTestnet, kycStatus, setKycStatus, sign } = useWallet();
   const [trustline, setTrustline] = useState(false);
   const [claimed, setClaimed] = useState(false);
+  const [claimHash, setClaimHash] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -49,11 +50,16 @@ export function ParticipationPanel({ project }: { project: Project }) {
     if (!address) {
       setTrustline(false);
       setClaimed(false);
+      setClaimHash(null);
       return;
     }
     hasTrustline(address, project.assetCode).then(setTrustline).catch(() => setTrustline(false));
     getClaims(address)
-      .then((claims) => setClaimed(claims.some((c) => c.asset_code === project.assetCode)))
+      .then((claims) => {
+        const c = claims.find((x) => x.asset_code === project.assetCode);
+        setClaimed(Boolean(c));
+        setClaimHash(c?.tx_hash ?? null);
+      })
       .catch(() => setClaimed(false));
   }, [address, project.assetCode]);
 
@@ -100,6 +106,7 @@ export function ParticipationPanel({ project }: { project: Project }) {
       const res = await claimTokens(address, project.assetCode);
       if (res.ok) {
         setClaimed(true);
+        setClaimHash(res.txHash ?? null);
         toast.success(res.message);
       } else {
         toast.error(res.message);
@@ -191,7 +198,21 @@ export function ParticipationPanel({ project }: { project: Project }) {
               {busy === "claim" ? "Reclamando…" : `Reclamar ${CLAIM_AMOUNT} tokens de prueba`}
             </button>
           )}
-          {claimed && <p className="mt-2 text-leaf">Tokens de prueba ya reclamados.</p>}
+          {claimed && (
+            <p className="mt-2 text-leaf">
+              ¡Listo! Recibiste {CLAIM_AMOUNT} {project.assetCode} de prueba.
+            </p>
+          )}
+          {claimed && claimHash && (
+            <a
+              href={explorerTx(claimHash)}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 block break-all font-mono text-xs text-violet underline"
+            >
+              {claimHash}
+            </a>
+          )}
         </Step>
       </ol>
     </aside>
