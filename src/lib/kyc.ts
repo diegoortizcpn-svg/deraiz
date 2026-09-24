@@ -1,37 +1,43 @@
-import { supabase } from "@/integrations/supabase/client";
+import { createKycSession, getKycStatusFn } from "@/lib/kyc.functions";
 
-// Estados internos exactos (se muestran traducidos en la interfaz).
-export type KycStatus = "Not Started" | "In Progress" | "Approved" | "Declined" | "In Review";
+export type KycStatus =
+  | "Not Started"
+  | "In Progress"
+  | "In Review"
+  | "Approved"
+  | "Declined"
+  | "Abandoned"
+  | "Expired";
 
 export const KYC_LABELS: Record<KycStatus, string> = {
   "Not Started": "No iniciado",
   "In Progress": "En proceso",
+  "In Review": "En revisión",
   Approved: "Aprobado",
   Declined: "Rechazado",
-  "In Review": "En revisión",
+  Abandoned: "Abandonado",
+  Expired: "Vencido",
 };
 
+export const RETRYABLE: KycStatus[] = ["Not Started", "Declined", "Abandoned", "Expired"];
+
 export async function getKycStatus(walletAddress: string): Promise<KycStatus> {
-  const { data } = await supabase
-    .from("kyc_verifications")
-    .select("status")
-    .eq("wallet_address", walletAddress)
-    .maybeSingle();
-  return (data?.status as KycStatus) ?? "Not Started";
+  const res = await getKycStatusFn({ data: { walletAddress } });
+  return (res.status as KycStatus) ?? "Not Started";
 }
 
-/**
- * Placeholder: la verificación real con Didit se conecta más adelante.
- * Por ahora registra la wallet con estado "In Progress".
- */
+/** Crea la sesión en Didit y abre la verificación en una pestaña nueva. */
 export async function startKyc(walletAddress: string): Promise<KycStatus> {
-  const { data } = await supabase
-    .from("kyc_verifications")
-    .upsert(
-      { wallet_address: walletAddress, status: "In Progress" },
-      { onConflict: "wallet_address" },
-    )
-    .select("status")
-    .maybeSingle();
-  return (data?.status as KycStatus) ?? "In Progress";
+  const tab = typeof window !== "undefined" ? window.open("", "_blank") : null;
+  try {
+    const res = await createKycSession({ data: { walletAddress } });
+    if (res.url) {
+      if (tab) tab.location.href = res.url;
+      else window.open(res.url, "_blank", "noopener");
+    } else tab?.close();
+    return res.status as KycStatus;
+  } catch (e) {
+    tab?.close();
+    throw e;
+  }
 }
