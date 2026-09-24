@@ -123,7 +123,7 @@ export const projects: Project[] = [
     crop: "Miel",
     image: mielImg,
     summary:
-      "Miel de monte nativo, lejos de zonas cultivadas, con registro de temporada y origen en testnet.",
+      "Miel de monte nativo, lejos de zonas cultivadas, con seguimiento de temporada y origen.",
     sheet: [
       { label: "Origen", value: "Monte nativo, lejos de zonas cultivadas" },
       { label: "Floraciones", value: "Algarrobo y mistol" },
