@@ -47,7 +47,7 @@ export const projects: Project[] = [
     timeline: [
       { title: "Preparación del suelo", detail: "Acondicionamiento del lote demostrativo." },
       { title: "Plantación", detail: "Implantación de las 13.000 plantas." },
-      { title: "Primera cosecha", detail: "Primer ciclo productivo registrado." },
+      { title: "Primera cosecha", detail: "Primer ciclo productivo." },
       { title: "Segunda cosecha", detail: "Segundo ciclo del año." },
     ],
     risks: ["Clima", "Plagas", "Ejecución de obra"],
@@ -135,7 +135,7 @@ export const projects: Project[] = [
       { title: "Floración", detail: "Inicio de la temporada de néctar." },
       { title: "Extracción", detail: "Cosecha de cuadros y extracción en sala." },
       { title: "Envasado", detail: "Fraccionado y control de calidad." },
-      { title: "Despacho", detail: "Salida de lotes registrada." },
+      { title: "Despacho", detail: "Salida de lotes." },
     ],
     risks: ["Dependencia del clima y la floración", "Sanidad de las colmenas"],
   },
