@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProjectCard } from "@/components/ProjectCard";
-import { countries, crops, projects } from "@/data/projects";
+import { countries, projects } from "@/data/projects";
 
 export const Route = createFileRoute("/proyectos/")({
   head: () => ({
