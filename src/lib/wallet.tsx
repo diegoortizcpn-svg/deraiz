@@ -81,8 +81,25 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       setKycStatus("Not Started");
       return;
     }
-    getKycStatus(address).then(setKycStatus).catch(() => setKycStatus("Not Started"));
+    const load = () => getKycStatus(address).then(setKycStatus).catch(() => {});
+    load();
+    const onVis = () => document.visibilityState === "visible" && load();
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("focus", onVis);
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("focus", onVis);
+    };
   }, [address]);
+
+  // Mientras la verificación esté en proceso, reconsultar cada 5 segundos.
+  useEffect(() => {
+    if (!address || (kycStatus !== "In Progress" && kycStatus !== "In Review")) return;
+    const id = setInterval(() => {
+      getKycStatus(address).then(setKycStatus).catch(() => {});
+    }, 5000);
+    return () => clearInterval(id);
+  }, [address, kycStatus]);
 
   const connect = useCallback(async () => {
     setError(null);

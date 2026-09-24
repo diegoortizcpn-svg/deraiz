@@ -64,16 +64,17 @@ export function ParticipationPanel({ project }: { project: Project }) {
     setBusy("kyc");
     try {
       const status = await startKyc(address);
-      setKycStatus(status);
-      toast.info(
-        "Verificación iniciada con Didit (demo). El estado queda en proceso hasta que el proveedor responda.",
-      );
-    } catch {
-      toast.error("No se pudo iniciar la verificación.");
+      setKycStatus(status === "Not Started" ? "In Progress" : status);
+      if (status !== "Approved") {
+        toast.info("Completá la verificación en la pestaña de Didit. El estado se actualiza solo.");
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "No se pudo iniciar la verificación.");
     } finally {
       setBusy(null);
     }
   };
+  const canStartKyc = RETRYABLE.includes(kycStatus);
 
   const handleTrustline = async () => {
     if (!address) return;
