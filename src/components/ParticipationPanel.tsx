@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/lib/wallet";
-import { KYC_LABELS, startKyc } from "@/lib/kyc";
+import { KYC_LABELS, RETRYABLE, startKyc } from "@/lib/kyc";
 import { buildTrustlineXdr, hasTrustline, submitSignedXdr } from "@/lib/stellar";
 import { claimTokens, getClaims } from "@/lib/claim";
 import { CLAIM_AMOUNT, explorerTx, shortAddress } from "@/config/assets";
@@ -133,14 +133,14 @@ export function ParticipationPanel({ project }: { project: Project }) {
           <p>
             Estado: <strong className="text-foreground">{KYC_LABELS[kycStatus]}</strong>
           </p>
-          {address && !approved && (
+          {address && canStartKyc && (
             <button
               type="button"
               onClick={handleKyc}
               disabled={busy === "kyc"}
               className="mt-2 rounded-full bg-violet px-4 py-2 text-sm font-medium text-violet-foreground transition hover:brightness-110 disabled:opacity-60"
             >
-              {busy === "kyc" ? "Iniciando…" : "Verificar identidad"}
+              {busy === "kyc" ? "Iniciando…" : kycStatus === "Not Started" ? "Verificar identidad" : "Reintentar verificación"}
             </button>
           )}
         </Step>
