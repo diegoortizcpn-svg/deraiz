@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Reveal } from "@/components/Reveal";
 import { ParticipationPanel } from "@/components/ParticipationPanel";
-import { getProject, TOKEN_MEANING } from "@/data/projects";
+import { ProjectCard } from "@/components/ProjectCard";
+import { getProject, projects, TOKEN_MEANING } from "@/data/projects";
 import { EXPLORER_URL, ISSUER, isIssuerConfigured } from "@/config/assets";
 
 export const Route = createFileRoute("/proyectos/$slug")({
@@ -62,6 +63,19 @@ function ProyectoDetalle() {
         <div className="absolute inset-0 bg-forest/65" />
         <div className="absolute inset-x-0 bottom-0">
           <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
+            <Link
+              to="/proyectos"
+              className="text-sm text-forest-foreground/85 transition hover:text-lime"
+            >
+              ← Volver a proyectos
+            </Link>
+            <nav aria-label="Breadcrumb" className="mb-4 mt-2 text-xs text-forest-foreground/70">
+              <Link to="/" className="hover:text-lime">Inicio</Link>
+              <span className="mx-1.5">/</span>
+              <Link to="/proyectos" className="hover:text-lime">Proyectos</Link>
+              <span className="mx-1.5">/</span>
+              <span className="text-forest-foreground">{project.name}</span>
+            </nav>
             <span className="rounded-full bg-cream/90 px-3 py-1 text-xs font-medium text-foreground">
               Proyecto ficticio · Datos ilustrativos
             </span>
@@ -77,6 +91,9 @@ function ProyectoDetalle() {
 
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.6fr_1fr]">
         <div className="space-y-10">
+          <div className="lg:hidden">
+            <ParticipationPanel project={project} />
+          </div>
           <Reveal>
             <section className="rounded-3xl bg-card p-7 shadow-soft">
               <h2 className="text-2xl text-foreground">Ficha productiva</h2>
@@ -172,10 +189,21 @@ function ProyectoDetalle() {
           </Reveal>
         </div>
 
-        <div className="lg:sticky lg:top-28 lg:self-start">
+        <div className="hidden lg:sticky lg:top-28 lg:block lg:self-start">
           <ParticipationPanel project={project} />
         </div>
       </div>
+
+      <section className="mx-auto max-w-6xl px-4 sm:px-6">
+        <h2 className="text-3xl text-foreground">Otros proyectos</h2>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {projects
+            .filter((p) => p.slug !== project.slug)
+            .map((p, i) => (
+              <ProjectCard key={p.slug} project={p} index={i} />
+            ))}
+        </div>
+      </section>
     </div>
   );
 }

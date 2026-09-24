@@ -36,7 +36,7 @@ export const projects: Project[] = [
     crop: "Frambuesa",
     image: frambuesaImg,
     summary:
-      "Lote demostrativo de frambuesa refloreciente con riego por goteo y macrotúneles, con registro de cada hito en Stellar testnet.",
+      "Lote demostrativo de frambuesa refloreciente con riego por goteo y macrotúneles. Hitos productivos ilustrativos.",
     sheet: [
       { label: "Variedad", value: "Refloreciente, 2 cosechas por año" },
       { label: "Lote demo", value: "2 ha" },

@@ -25,8 +25,8 @@ export function Navbar() {
     <header className="sticky top-0 z-40 bg-forest/95 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-          <span className="grid size-8 place-items-center rounded-full bg-lime text-sm font-semibold text-lime-foreground">
-            R
+          <span className="grid size-8 place-items-center overflow-hidden rounded-full bg-lime">
+            <img src="/deraiz-icono-navbar.svg" alt="" className="size-full object-contain" />
           </span>
           <span className="font-display text-lg text-forest-foreground">
             De<span className="text-lime">Raíz</span>
@@ -88,8 +88,11 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div className="max-w-sm">
-            <p className="font-display text-2xl">
-              De<span className="text-lime">Raíz</span>
+            <p className="flex items-center gap-2 font-display text-2xl">
+              <span className="grid size-9 place-items-center overflow-hidden rounded-full bg-lime">
+                <img src="/deraiz-icono-navbar.svg" alt="" className="size-full object-contain" />
+              </span>
+              <span>De<span className="text-lime">Raíz</span></span>
             </p>
             <p className="mt-3 text-sm text-forest-foreground/70">
               Trazabilidad de la producción agrícola de Latinoamérica con registro en Stellar.
@@ -119,6 +122,14 @@ export function Footer() {
                 className="text-violet-foreground/90 hover:text-lime"
               >
                 Freighter
+              </a>
+              <a
+                href="https://github.com/diegoortizcpn-svg/deraiz"
+                target="_blank"
+                rel="noreferrer"
+                className="text-violet-foreground/90 hover:text-lime"
+              >
+                Código en GitHub
               </a>
             </div>
           </div>

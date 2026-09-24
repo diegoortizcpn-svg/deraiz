@@ -1,5 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ProjectCard } from "@/components/ProjectCard";
 import { countries, crops, projects } from "@/data/projects";
 
@@ -52,7 +59,30 @@ function ProyectosPage() {
         proyectos son ficticios y sus datos son ilustrativos.
       </p>
 
-      <div className="mt-10 space-y-4">
+      <div className="mt-10 grid grid-cols-2 gap-3 md:hidden">
+        {[
+          { label: "País", value: country, set: setCountry, options: countries },
+          { label: "Cultivo", value: crop, set: setCrop, options: crops },
+        ].map((f) => (
+          <div key={f.label} className="flex flex-col gap-1.5">
+            <span className="text-xs uppercase tracking-wider text-muted-foreground">{f.label}</span>
+            <Select value={f.value} onValueChange={f.set}>
+              <SelectTrigger aria-label={f.label} className="rounded-full border-border bg-card shadow-soft">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="rounded-2xl">
+                {["Todos", ...f.options].map((o) => (
+                  <SelectItem key={o} value={o} className="rounded-xl">
+                    {o}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-10 hidden space-y-4 md:block">
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs uppercase tracking-wider text-muted-foreground">País</span>
           {["Todos", ...countries].map((c) => (

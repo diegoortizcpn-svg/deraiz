@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { NetworkNotice, WalletButton } from "@/components/WalletButton";
 import { useWallet } from "@/lib/wallet";
 import { KYC_LABELS } from "@/lib/kyc";
-import { loadDeRaizBalances, loadTransactions, type TokenBalance, type TxRecord } from "@/lib/stellar";
+import { horizon, loadDeRaizBalances, loadTransactions, type TokenBalance, type TxRecord } from "@/lib/stellar";
 import { explorerAccount, explorerTx, shortAddress } from "@/config/assets";
 
 export const Route = createFileRoute("/mi-cuenta")({
@@ -41,13 +41,19 @@ function MiCuenta() {
   const [txs, setTxs] = useState<TxRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [xlm, setXlm] = useState<string | null>(null);
 
   useEffect(() => {
     if (!address) {
       setBalances([]);
       setTxs([]);
+      setXlm(null);
       return;
     }
+    horizon
+      .loadAccount(address)
+      .then((acc) => setXlm(acc.balances.find((b) => b.asset_type === "native")?.balance ?? "0"))
+      .catch(() => setXlm(null));
     setLoading(true);
     setNotice(null);
     Promise.all([loadDeRaizBalances(address), loadTransactions(address)])
@@ -82,11 +88,28 @@ function MiCuenta() {
         </div>
       ) : (
         <div className="mt-8 grid gap-6 md:grid-cols-2">
+          {(kycStatus === "Not Started" || (!loading && balances.length === 0)) && (
+            <section className="flex flex-col items-start gap-4 rounded-3xl bg-card p-7 shadow-soft md:col-span-2 md:flex-row md:items-center md:justify-between">
+              <p className="text-sm text-muted-foreground">
+                Elegí un proyecto para verificar tu identidad y reclamar tokens de prueba
+              </p>
+              <Link
+                to="/proyectos"
+                className="inline-flex shrink-0 rounded-full bg-forest px-5 py-2.5 text-sm font-medium text-forest-foreground transition hover:bg-forest-soft"
+              >
+                Explorar proyectos
+              </Link>
+            </section>
+          )}
           <section className="rounded-3xl bg-card p-7 shadow-soft">
             <h2 className="text-xl text-foreground">Wallet</h2>
             <p className="mt-3 break-all font-mono text-sm text-violet">{address}</p>
             <p className="mt-2 text-sm text-muted-foreground">
               Red: {isTestnet ? "Stellar Testnet" : "fuera de testnet"}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Saldo XLM (testnet):{" "}
+              <span className="font-mono text-foreground">{xlm ?? "—"}</span>
             </p>
             <a
               href={explorerAccount(address)}
@@ -157,7 +180,7 @@ function MiCuenta() {
                     {t.hash.slice(0, 10)}…{t.hash.slice(-6)}
                   </a>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(t.createdAt).toLocaleString("es-AR")} · {t.operationCount} op ·{" "}
+                    {new Date(t.createdAt).toLocaleString("es-AR", { hour12: false })} · {t.operationCount} op ·{" "}
                     {t.successful ? "confirmada" : "fallida"}
                   </span>
                 </li>

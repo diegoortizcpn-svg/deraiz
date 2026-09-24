@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/Reveal";
 import { EXPLORER_URL } from "@/config/assets";
 
@@ -121,6 +121,15 @@ function CompliancePage() {
           </p>
         </section>
       </Reveal>
+
+      <div className="mt-12 flex justify-center">
+        <Link
+          to="/proyectos"
+          className="inline-flex rounded-full bg-forest px-6 py-3 text-sm font-medium text-forest-foreground transition hover:bg-forest-soft"
+        >
+          Explorar proyectos
+        </Link>
+      </div>
     </div>
   );
 }
