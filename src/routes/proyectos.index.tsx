@@ -40,6 +40,28 @@ function ProyectosPage() {
   const [country, setCountry] = useState<string>("Todos");
   const [crop, setCrop] = useState<string>("Todos");
 
+  const cropOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          projects
+            .filter((p) => country === "Todos" || p.country === country)
+            .map((p) => p.crop),
+        ),
+      ),
+    [country],
+  );
+
+  const handleCountryChange = (c: string) => {
+    setCountry(c);
+    const available = Array.from(
+      new Set(
+        projects.filter((p) => c === "Todos" || p.country === c).map((p) => p.crop),
+      ),
+    );
+    if (crop !== "Todos" && !available.includes(crop)) setCrop("Todos");
+  };
+
   const filtered = useMemo(
     () =>
       projects.filter(
