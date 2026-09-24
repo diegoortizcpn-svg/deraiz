@@ -14,6 +14,7 @@ import { Route as ComplianceRouteImport } from './routes/compliance'
 import { Route as MiCuentaRouteImport } from './routes/mi-cuenta'
 import { Route as ProyectosIndexRouteImport } from './routes/proyectos.index'
 import { Route as ProyectosSlugRouteImport } from './routes/proyectos.$slug'
+import { Route as ApiPublicDiditWebhookRouteImport } from './routes/api/public/didit-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const ProyectosSlugRoute = ProyectosSlugRouteImport.update({
   path: '/proyectos/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDiditWebhookRoute = ApiPublicDiditWebhookRouteImport.update({
+  id: '/api/public/didit-webhook',
+  path: '/api/public/didit-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/mi-cuenta': typeof MiCuentaRoute
   '/proyectos/$slug': typeof ProyectosSlugRoute
   '/proyectos/': typeof ProyectosIndexRoute
+  '/api/public/didit-webhook': typeof ApiPublicDiditWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/mi-cuenta': typeof MiCuentaRoute
   '/proyectos/$slug': typeof ProyectosSlugRoute
   '/proyectos': typeof ProyectosIndexRoute
+  '/api/public/didit-webhook': typeof ApiPublicDiditWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,25 @@ export interface FileRoutesById {
   '/mi-cuenta': typeof MiCuentaRoute
   '/proyectos/$slug': typeof ProyectosSlugRoute
   '/proyectos/': typeof ProyectosIndexRoute
+  '/api/public/didit-webhook': typeof ApiPublicDiditWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/compliance' | '/mi-cuenta' | '/proyectos/$slug' | '/proyectos/'
+    | '/'
+    | '/compliance'
+    | '/mi-cuenta'
+    | '/proyectos/$slug'
+    | '/proyectos/'
+    | '/api/public/didit-webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/compliance' | '/mi-cuenta' | '/proyectos/$slug' | '/proyectos'
+  to:
+    | '/'
+    | '/compliance'
+    | '/mi-cuenta'
+    | '/proyectos/$slug'
+    | '/proyectos'
+    | '/api/public/didit-webhook'
   id:
     | '__root__'
     | '/'
@@ -76,6 +96,7 @@ export interface FileRouteTypes {
     | '/mi-cuenta'
     | '/proyectos/$slug'
     | '/proyectos/'
+    | '/api/public/didit-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -84,6 +105,7 @@ export interface RootRouteChildren {
   MiCuentaRoute: typeof MiCuentaRoute
   ProyectosSlugRoute: typeof ProyectosSlugRoute
   ProyectosIndexRoute: typeof ProyectosIndexRoute
+  ApiPublicDiditWebhookRoute: typeof ApiPublicDiditWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -123,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProyectosSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/didit-webhook': {
+      id: '/api/public/didit-webhook'
+      path: '/api/public/didit-webhook'
+      fullPath: '/api/public/didit-webhook'
+      preLoaderRoute: typeof ApiPublicDiditWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -132,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   MiCuentaRoute: MiCuentaRoute,
   ProyectosSlugRoute: ProyectosSlugRoute,
   ProyectosIndexRoute: ProyectosIndexRoute,
+  ApiPublicDiditWebhookRoute: ApiPublicDiditWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
