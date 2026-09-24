@@ -31,6 +31,8 @@ const statusTone: Record<string, string> = {
   "In Progress": "bg-violet text-violet-foreground",
   "In Review": "bg-violet text-violet-foreground",
   "Not Started": "bg-muted text-muted-foreground",
+  Abandoned: "bg-muted text-muted-foreground",
+  Expired: "bg-muted text-muted-foreground",
 };
 
 function MiCuenta() {
