@@ -40,7 +40,7 @@ export const Route = createFileRoute("/api/public/didit-webhook")({
         } catch {
           return new Response("Bad JSON", { status: 400 });
         }
-        const inner = (payload.data && typeof payload.data === "object" ? payload.data : {}) as Record<
+        const inner = (payload["data"] && typeof payload["data"] === "object" ? payload["data"] : {}) as Record<
           string,
           unknown
         >;
