@@ -147,8 +147,9 @@ export function ParticipationPanel({ project }: { project: Project }) {
 
         <Step n={3} title="Crear trustline" done={trustline} enabled={Boolean(address) && approved}>
           <p>
-            Autorizás a tu wallet a mantener el activo{" "}
-            <span className="font-mono text-violet">{project.assetCode}</span>.
+            Abrís en tu wallet la línea de confianza para recibir{" "}
+            <span className="font-mono text-violet">{project.assetCode}</span>. Queda bloqueada hasta
+            que el emisor la habilite (solo con KYC aprobado).
           </p>
           {address && approved && !trustline && (
             <button
@@ -179,6 +180,7 @@ export function ParticipationPanel({ project }: { project: Project }) {
           enabled={Boolean(address) && approved && trustline}
         >
           <p>Gratis, una sola vez por wallet y por proyecto. Los tokens no se compran.</p>
+          <p className="mt-1">El emisor habilita tu trustline y te envía los tokens en una sola transacción.</p>
           {address && approved && trustline && !claimed && (
             <button
               type="button"
