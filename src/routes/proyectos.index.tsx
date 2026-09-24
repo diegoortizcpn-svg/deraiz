@@ -83,8 +83,8 @@ function ProyectosPage() {
 
       <div className="mt-10 grid grid-cols-2 gap-3 md:hidden">
         {[
-          { label: "País", value: country, set: setCountry, options: countries },
-          { label: "Cultivo", value: crop, set: setCrop, options: crops },
+          { label: "País", value: country, set: handleCountryChange, options: countries },
+          { label: "Cultivo", value: crop, set: setCrop, options: cropOptions },
         ].map((f) => (
           <div key={f.label} className="flex flex-col gap-1.5">
             <span className="text-xs uppercase tracking-wider text-muted-foreground">{f.label}</span>
@@ -108,7 +108,7 @@ function ProyectosPage() {
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs uppercase tracking-wider text-muted-foreground">País</span>
           {["Todos", ...countries].map((c) => (
-            <button key={c} type="button" onClick={() => setCountry(c)} className={pill(country === c)}>
+            <button key={c} type="button" onClick={() => handleCountryChange(c)} className={pill(country === c)}>
               {c}
             </button>
           ))}
@@ -117,7 +117,7 @@ function ProyectosPage() {
           <span className="mr-1 text-xs uppercase tracking-wider text-muted-foreground">
             Cultivo
           </span>
-          {["Todos", ...crops].map((c) => (
+          {["Todos", ...cropOptions].map((c) => (
             <button key={c} type="button" onClick={() => setCrop(c)} className={pill(crop === c)}>
               {c}
             </button>
