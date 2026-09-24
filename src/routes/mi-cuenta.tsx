@@ -156,7 +156,7 @@ function MiCuenta() {
                   </span>
                   <span className="font-mono text-sm text-foreground">{b.balance}</span>
                   <span className={`text-xs ${b.authorized ? "text-leaf" : "text-muted-foreground"}`}>
-                    {b.authorized ? "Habilitado" : "Sin habilitación"}
+                    {b.authorized ? "Habilitada" : "Bloqueada · esperando habilitación del emisor"}
                   </span>
                 </li>
               ))}
