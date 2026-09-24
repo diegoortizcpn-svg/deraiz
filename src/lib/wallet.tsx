@@ -1,12 +1,24 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import {
-  isConnected,
-  isAllowed,
-  requestAccess,
-  getAddress,
-  getNetwork,
-  signTransaction,
-} from "@stellar/freighter-api";
+
+type FreighterApi = {
+  isConnected: () => Promise<{ isConnected?: boolean }>;
+  isAllowed: () => Promise<{ isAllowed?: boolean }>;
+  requestAccess: () => Promise<{ address?: string; error?: unknown }>;
+  getAddress: () => Promise<{ address?: string }>;
+  getNetwork: () => Promise<{ network?: string }>;
+  signTransaction: (
+    xdr: string,
+    opts: { networkPassphrase: string; address: string },
+  ) => Promise<{ signedTxXdr?: string; error?: unknown }>;
+};
+
+// La extensión solo existe en el navegador: se carga de forma diferida.
+async function freighter(): Promise<FreighterApi> {
+  const mod = (await import("@stellar/freighter-api")) as unknown as {
+    default?: FreighterApi;
+  } & FreighterApi;
+  return mod.default ?? mod;
+}
 import { Networks } from "@stellar/stellar-sdk";
 import { getKycStatus, type KycStatus } from "@/lib/kyc";
 
@@ -36,7 +48,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [kycStatus, setKycStatus] = useState<KycStatus>("Not Started");
 
   const readNetwork = useCallback(async () => {
-    const res = await getNetwork();
+    const res = await (await freighter()).getNetwork();
     setNetwork(res.network ?? null);
   }, []);
 
@@ -44,13 +56,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     let active = true;
     (async () => {
       try {
-        const res = await isConnected();
+        const res = await (await freighter()).isConnected();
         if (!active) return;
         setAvailable(Boolean(res.isConnected));
         if (!res.isConnected) return;
-        const allowed = await isAllowed();
+        const allowed = await (await freighter()).isAllowed();
         if (allowed.isAllowed) {
-          const addr = await getAddress();
+          const addr = await (await freighter()).getAddress();
           if (!active) return;
           if (addr.address) setAddress(addr.address);
           await readNetwork();
@@ -76,14 +88,14 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setError(null);
     setConnecting(true);
     try {
-      const check = await isConnected();
+      const check = await (await freighter()).isConnected();
       if (!check.isConnected) {
         setAvailable(false);
         setError("No encontramos la extensión Freighter en este navegador.");
         return;
       }
       setAvailable(true);
-      const res = await requestAccess();
+      const res = await (await freighter()).requestAccess();
       if (res.error || !res.address) {
         setError("No se pudo conectar la wallet.");
         return;
@@ -110,7 +122,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const sign = useCallback(
     async (xdr: string) => {
       if (!address) throw new Error("Conectá tu wallet primero.");
-      const res = await signTransaction(xdr, {
+      const res = await (await freighter()).signTransaction(xdr, {
         networkPassphrase: Networks.TESTNET,
         address,
       });
