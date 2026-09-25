@@ -140,6 +140,7 @@ sequenceDiagram
 | 1 | Activación de los flags de compliance en el emisor (`set_flags: 11`) | [`86f0f580380b126b610085a1f3f7fd9064522d94829813d8f577726069173803`](https://stellar.expert/explorer/testnet/tx/86f0f580380b126b610085a1f3f7fd9064522d94829813d8f577726069173803) |
 | 2 | El participante crea su trustline a `FRAMB` (queda bloqueada) | [`ca1bb44bd7891066b48dbd16fda199c7c628afb786d2f184ef303bc8dd7df353`](https://stellar.expert/explorer/testnet/tx/ca1bb44bd7891066b48dbd16fda199c7c628afb786d2f184ef303bc8dd7df353) |
 | 3 | **Tras el KYC aprobado, el emisor habilita la trustline y envía 10 `FRAMB`** (2 operaciones, 1 transacción) | [`5d4df96f30ca828a0caf3d0014a92fa98a57c264e158c7e59e3073c7a72e1d01`](https://stellar.expert/explorer/testnet/tx/5d4df96f30ca828a0caf3d0014a92fa98a57c264e158c7e59e3073c7a72e1d01) |
+| 4 | El mismo flujo con `HONGO` (el que muestra el video demo): habilitación + envío de 10 tokens en una transacción | [`a8d76860ff91c2636e8d329bc761099201661e8418760fc3806da91ddbe7ddcc`](https://stellar.expert/explorer/testnet/tx/a8d76860ff91c2636e8d329bc761099201661e8418760fc3806da91ddbe7ddcc) |
 
 Estado resultante de la trustline del participante, según Horizon:
 
