@@ -233,7 +233,7 @@ Lo siguiente **no forma parte de lo construido**; es la evolución prevista:
 | Integrante | Rol | GitHub |
 |---|---|---|
 | Diego J. Ortiz | Estructuración, desarrollo e integración | [@diegoortizcpn-svg](https://github.com/diegoortizcpn-svg) |
-| Jean Nuñez | Estructuración y pitch | *[usuario de GitHub]* |
+| Jean Nuñez | Estructuración y pitch | *[@JCNP-Dev](https://github.com/JCNP-Dev)* |
 
 ## Librerías de terceros
 
