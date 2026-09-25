@@ -5,7 +5,7 @@ export const NETWORK = "TESTNET" as const;
 export const HORIZON_URL = "https://horizon-testnet.stellar.org";
 export const EXPLORER_URL = "https://stellar.expert/explorer/testnet";
 
-// Emisor único de los 4 activos de trazabilidad (placeholder hasta el despliegue).
+// Emisor único de los 4 activos de trazabilidad (cuenta de testnet con AUTH_REQUIRED, AUTH_REVOCABLE y AUTH_CLAWBACK_ENABLED).
 export const ISSUER = "GAWC4ZMA4MGJF3TM5LW5BWPPQWL4JTFNXLPUGPLSWIV6UE3L4X7HSR6X";
 
 export const ASSET_CODES = ["FRAMB", "HONGO", "PISTA", "MIEL"] as const;
