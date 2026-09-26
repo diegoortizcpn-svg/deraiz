@@ -227,7 +227,7 @@ Lo siguiente **no forma parte de lo construido**; es la evolución prevista:
 
 ## Video demo
 
-🎥 *[Link al video demo]* — pendiente de carga.
+🎥 [Ver el video demo en YouTube](https://www.youtube.com/watch?v=gpWHHc6ZjRI)
 
 ## Equipo
 
