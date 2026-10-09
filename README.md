@@ -141,6 +141,11 @@ sequenceDiagram
 | 2 | El participante crea su trustline a `FRAMB` (queda bloqueada) | [`ca1bb44bd7891066b48dbd16fda199c7c628afb786d2f184ef303bc8dd7df353`](https://stellar.expert/explorer/testnet/tx/ca1bb44bd7891066b48dbd16fda199c7c628afb786d2f184ef303bc8dd7df353) |
 | 3 | **Tras el KYC aprobado, el emisor habilita la trustline y envía 10 `FRAMB`** (2 operaciones, 1 transacción) | [`5d4df96f30ca828a0caf3d0014a92fa98a57c264e158c7e59e3073c7a72e1d01`](https://stellar.expert/explorer/testnet/tx/5d4df96f30ca828a0caf3d0014a92fa98a57c264e158c7e59e3073c7a72e1d01) |
 | 4 | El mismo flujo con `HONGO` (el que muestra el video demo): habilitación + envío de 10 tokens en una transacción | [`a8d76860ff91c2636e8d329bc761099201661e8418760fc3806da91ddbe7ddcc`](https://stellar.expert/explorer/testnet/tx/a8d76860ff91c2636e8d329bc761099201661e8418760fc3806da91ddbe7ddcc) |
+| 5 | El participante crea su trustline a `MIEL` (queda bloqueada) | [`c3a91febf6057c4f7ce4588de53e3a56e55ddd4adabc11006f402718d7117c23`](https://stellar.expert/explorer/testnet/tx/c3a91febf6057c4f7ce4588de53e3a56e55ddd4adabc11006f402718d7117c23) |
+| 6 | Tras el KYC aprobado, el emisor habilita la trustline y envía 10 `MIEL` (2 operaciones, 1 transacción) | [`6461cb59767f9c14671541a2a169a7ed220556140c08d7cbf31c3800f84863ac`](https://stellar.expert/explorer/testnet/tx/6461cb59767f9c14671541a2a169a7ed220556140c08d7cbf31c3800f84863ac) |
+| 7 | **El emisor revoca la habilitación** de la trustline `MIEL` (`SetTrustLineFlags`, `clear_flags: 1`) | [`87ee6ea5818ae6c96223a4590c23625d90c797fe7ae7413420e49f5fec630f06`](https://stellar.expert/explorer/testnet/tx/87ee6ea5818ae6c96223a4590c23625d90c797fe7ae7413420e49f5fec630f06) |
+| 8 | **La red rechaza** un pago de 1 `MIEL` del emisor a la trustline revocada (`tx_failed` / `op_not_authorized`) | [`992706f425d1063efb9662547075a10eb6e08e85d52f59050c1b73be4347cde4`](https://stellar.expert/explorer/testnet/tx/992706f425d1063efb9662547075a10eb6e08e85d52f59050c1b73be4347cde4) |
+| 9 | **El emisor recupera los 10 `MIEL`** con `Clawback` (saldo a 0) | [`82cd6ae0fcf9776fe023e0481fcce6d21b17fee5c78135bc099c0aa3c3d14cb6`](https://stellar.expert/explorer/testnet/tx/82cd6ae0fcf9776fe023e0481fcce6d21b17fee5c78135bc099c0aa3c3d14cb6) |
 
 Estado resultante de la trustline del participante, según Horizon:
 
@@ -155,6 +160,26 @@ Estado resultante de la trustline del participante, según Horizon:
 ```
 
 `is_clawback_enabled: true` confirma que el emisor conserva la capacidad de recuperar los tokens de esa wallet.
+
+### Revocación y clawback (demostrado sobre `MIEL`)
+
+Los cuatro activos comparten el mismo emisor y los mismos flags, por lo que la demostración sobre `MIEL` vale para todos. Se eligió `MIEL` para no alterar la evidencia de `FRAMB` y `HONGO`. Las operaciones 7 a 9 se firmaron como emisor desde Stellar Laboratory: la app todavía no tiene una función de administración (hoja de ruta).
+
+Estado final de la trustline `MIEL`, según Horizon:
+
+```json
+{
+  "balance": "0.0000000",
+  "is_authorized": false,
+  "is_clawback_enabled": true,
+  "asset_code": "MIEL",
+  "asset_issuer": "GAWC4ZMA4MGJF3TM5LW5BWPPQWL4JTFNXLPUGPLSWIV6UE3L4X7HSR6X"
+}
+```
+
+- **Costos:** revocación, pago rechazado y clawback costaron 0,00001 XLM cada uno. El pago rechazado también paga comisión, porque entra al ledger como transacción fallida.
+- **Fuente de verdad:** Stellar Expert puede listar flags como "quitados" aunque la operación no los haya tocado (la revocación tiene `clear_flags: 1`, solo *authorized*). El estado real se lee en Horizon, que confirma `is_clawback_enabled: true`.
+- **Histórico vs. estado vigente:** la tabla `token_claims` registra que el reclamo se hizo; el estado vigente de la habilitación se consulta en Horizon y la web lo muestra como ‘Revocada por el emisor’.
 
 ---
 
