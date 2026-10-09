@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/lib/wallet";
-import { KYC_LABELS, RETRYABLE, startKyc } from "@/lib/kyc";
+import { KYC_LABELS, RETRYABLE, startKyc, WalletSignError } from "@/lib/kyc";
 import { buildTrustlineXdr, hasTrustline, loadDeRaizBalances, submitSignedXdr } from "@/lib/stellar";
 import { claimTokens, getClaims } from "@/lib/claim";
 import { CLAIM_AMOUNT, explorerTx, shortAddress } from "@/config/assets";
@@ -39,7 +39,8 @@ function Step({ n, title, done, enabled, children }: StepProps) {
 }
 
 export function ParticipationPanel({ project }: { project: Project }) {
-  const { address, isTestnet, kycStatus, setKycStatus, sign } = useWallet();
+  const { address, isTestnet, kycStatus, setKycStatus, sign, signMessage } = useWallet();
+  const [kycUrl, setKycUrl] = useState<string | null>(null);
   const [trustline, setTrustline] = useState(false);
   const [balanceInfo, setBalanceInfo] = useState<{ authorized: boolean; balance: string } | null>(null);
   const [claimed, setClaimed] = useState(false);
@@ -77,13 +78,15 @@ export function ParticipationPanel({ project }: { project: Project }) {
     if (!address) return;
     setBusy("kyc");
     try {
-      const status = await startKyc(address);
+      const { status, url } = await startKyc(address, signMessage);
+      setKycUrl(url);
       setKycStatus(status === "Not Started" ? "In Progress" : status);
       if (status !== "Approved") {
         toast.info("Completá la verificación en la pestaña de Didit. El estado se actualiza solo.");
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "No se pudo iniciar la verificación.");
+      if (e instanceof WalletSignError) toast.error("No se pudo firmar con la wallet.");
+      else toast.error(e instanceof Error ? e.message : "No se pudo iniciar la verificación.");
     } finally {
       setBusy(null);
     }
@@ -149,14 +152,29 @@ export function ParticipationPanel({ project }: { project: Project }) {
             Estado: <strong className="text-foreground">{KYC_LABELS[kycStatus]}</strong>
           </p>
           {address && canStartKyc && (
-            <button
-              type="button"
-              onClick={handleKyc}
-              disabled={busy === "kyc"}
-              className="mt-2 rounded-full bg-violet px-4 py-2 text-sm font-medium text-violet-foreground transition hover:brightness-110 disabled:opacity-60"
+            <>
+              <button
+                type="button"
+                onClick={handleKyc}
+                disabled={busy === "kyc"}
+                className="mt-2 rounded-full bg-violet px-4 py-2 text-sm font-medium text-violet-foreground transition hover:brightness-110 disabled:opacity-60"
+              >
+                {busy === "kyc" ? "Iniciando…" : "Firmar y verificar identidad"}
+              </button>
+              <p className="mt-2 text-xs">
+                Primero firmás un mensaje con Freighter para probar que la wallet es tuya. No es una transacción y no tiene costo.
+              </p>
+            </>
+          )}
+          {address && kycUrl && !approved && (
+            <a
+              href={kycUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-block rounded-full border border-violet px-4 py-2 text-sm font-medium text-violet transition hover:bg-violet/10"
             >
-              {busy === "kyc" ? "Iniciando…" : kycStatus === "Not Started" ? "Verificar identidad" : "Reintentar verificación"}
-            </button>
+              Abrir verificación en Didit
+            </a>
           )}
         </Step>
 

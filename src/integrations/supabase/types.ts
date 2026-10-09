@@ -19,6 +19,7 @@ export type Database = {
           created_at: string
           didit_session_id: string | null
           id: string
+          ownership_verified_at: string | null
           status: string
           updated_at: string
           wallet_address: string
@@ -27,6 +28,7 @@ export type Database = {
           created_at?: string
           didit_session_id?: string | null
           id?: string
+          ownership_verified_at?: string | null
           status?: string
           updated_at?: string
           wallet_address: string
@@ -35,6 +37,7 @@ export type Database = {
           created_at?: string
           didit_session_id?: string | null
           id?: string
+          ownership_verified_at?: string | null
           status?: string
           updated_at?: string
           wallet_address?: string
@@ -64,6 +67,33 @@ export type Database = {
           created_at?: string
           id?: string
           tx_hash?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      wallet_challenges: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          nonce: string
+          used_at: string | null
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          nonce: string
+          used_at?: string | null
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          nonce?: string
+          used_at?: string | null
           wallet_address?: string
         }
         Relationships: []

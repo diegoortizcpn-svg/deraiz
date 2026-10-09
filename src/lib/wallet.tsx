@@ -10,7 +10,23 @@ type FreighterApi = {
     xdr: string,
     opts: { networkPassphrase: string; address: string },
   ) => Promise<{ signedTxXdr?: string; error?: unknown }>;
+  signMessage: (
+    message: string,
+    opts: { networkPassphrase: string; address: string },
+  ) => Promise<{ signedMessage?: unknown; signerAddress?: string; error?: unknown }>;
 };
+
+function toBase64(v: unknown): string {
+  if (typeof v === "string") return v;
+  let bytes: Uint8Array | null = null;
+  if (v instanceof Uint8Array) bytes = v;
+  else if (v && typeof v === "object" && Array.isArray((v as { data?: unknown }).data))
+    bytes = Uint8Array.from((v as { data: number[] }).data);
+  if (!bytes) throw new Error("Firma vacía.");
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
 
 // La extensión solo existe en el navegador: se carga de forma diferida.
 async function freighter(): Promise<FreighterApi> {
@@ -35,6 +51,7 @@ type WalletState = {
   refreshKyc: () => Promise<void>;
   setKycStatus: (s: KycStatus) => void;
   sign: (xdr: string) => Promise<string>;
+  signMessage: (message: string) => Promise<string>;
 };
 
 const WalletContext = createContext<WalletState | null>(null);
@@ -149,6 +166,21 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     [address],
   );
 
+  const signMessage = useCallback(
+    async (message: string) => {
+      if (!address) throw new Error("Conectá tu wallet primero.");
+      const res = await (await freighter()).signMessage(message, {
+        networkPassphrase: Networks.TESTNET,
+        address,
+      });
+      if (res.error || !res.signedMessage) throw new Error("No se pudo firmar con la wallet.");
+      if (res.signerAddress && res.signerAddress !== address)
+        throw new Error("La firma no corresponde a esta wallet.");
+      return toBase64(res.signedMessage);
+    },
+    [address],
+  );
+
   const isTestnet = network ? network.toUpperCase().includes("TESTNET") : false;
 
   return (
@@ -166,6 +198,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         refreshKyc,
         setKycStatus,
         sign,
+        signMessage,
       }}
     >
       {children}
