@@ -1,4 +1,4 @@
-import { createKycSession, getKycStatusFn } from "@/lib/kyc.functions";
+import { createKycSession, createWalletChallenge, getKycStatusFn } from "@/lib/kyc.functions";
 
 export type KycStatus =
   | "Not Started"
@@ -26,18 +26,20 @@ export async function getKycStatus(walletAddress: string): Promise<KycStatus> {
   return (res.status as KycStatus) ?? "Not Started";
 }
 
-/** Crea la sesión en Didit y abre la verificación en una pestaña nueva. */
-export async function startKyc(walletAddress: string): Promise<KycStatus> {
-  const tab = typeof window !== "undefined" ? window.open("", "_blank") : null;
+export class WalletSignError extends Error {}
+
+/** Prueba de propiedad de la wallet y luego crea la sesión en Didit. No abre pestañas. */
+export async function startKyc(
+  walletAddress: string,
+  signMessage: (message: string) => Promise<string>,
+): Promise<{ status: KycStatus; url: string | null }> {
+  const { nonce, message } = await createWalletChallenge({ data: { walletAddress } });
+  let signature: string;
   try {
-    const res = await createKycSession({ data: { walletAddress } });
-    if (res.url) {
-      if (tab) tab.location.href = res.url;
-      else window.open(res.url, "_blank", "noopener");
-    } else tab?.close();
-    return res.status as KycStatus;
-  } catch (e) {
-    tab?.close();
-    throw e;
+    signature = await signMessage(message);
+  } catch {
+    throw new WalletSignError("No se pudo firmar con la wallet.");
   }
+  const res = await createKycSession({ data: { walletAddress, nonce, signature } });
+  return { status: res.status as KycStatus, url: res.url };
 }

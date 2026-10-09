@@ -21,6 +21,24 @@ export function isValidWallet(addr: unknown): addr is string {
   return typeof addr === "string" && addr.startsWith("G") && StrKey.isValidEd25519PublicKey(addr);
 }
 
+export function buildOwnershipMessage(wallet: string, nonce: string, expiresUnix: number): string {
+  return (
+    "DeRaiz (testnet) - prueba de propiedad de wallet\n" +
+    "Dominio: deraiz.lovable.app\n" +
+    `Wallet: ${wallet}\n` +
+    `Codigo: ${nonce}\n` +
+    `Vence (unix): ${Math.floor(expiresUnix)}\n` +
+    "No es una transaccion y no tiene costo."
+  );
+}
+
+export function base64ToBytes(b64: string): Uint8Array {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
 export async function admin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
