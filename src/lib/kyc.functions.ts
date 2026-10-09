@@ -103,7 +103,12 @@ export const createKycSession = createServerFn({ method: "POST" })
     if (!body.session_id || !body.url) throw new Error("Respuesta inesperada del proveedor.");
 
     const { error } = await db.from("kyc_verifications").upsert(
-      { wallet_address: data.walletAddress, didit_session_id: body.session_id, status: "Not Started" },
+      {
+        wallet_address: data.walletAddress,
+        didit_session_id: body.session_id,
+        status: "Not Started",
+        ownership_verified_at: new Date().toISOString(),
+      },
       { onConflict: "wallet_address" },
     );
     if (error) {

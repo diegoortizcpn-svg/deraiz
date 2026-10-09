@@ -49,6 +49,7 @@ export function ParticipationPanel({ project }: { project: Project }) {
   const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => {
+    setKycUrl(null);
     if (!address) {
       setTrustline(false);
       setBalanceInfo(null);
@@ -82,7 +83,7 @@ export function ParticipationPanel({ project }: { project: Project }) {
       setKycUrl(url);
       setKycStatus(status === "Not Started" ? "In Progress" : status);
       if (status !== "Approved") {
-        toast.info("Completá la verificación en la pestaña de Didit. El estado se actualiza solo.");
+        toast.info("Tocá «Abrir verificación en Didit» para completar la verificación. El estado se actualiza solo.");
       }
     } catch (e) {
       if (e instanceof WalletSignError) toast.error("No se pudo firmar con la wallet.");
