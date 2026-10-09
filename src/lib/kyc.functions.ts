@@ -62,7 +62,7 @@ export const createKycSession = createServerFn({ method: "POST" })
     const message = buildOwnershipMessage(data.walletAddress, ch.nonce, expiresUnix);
     let valid = false;
     try {
-      valid = Keypair.fromPublicKey(data.walletAddress).verifyMessage(message, base64ToBytes(data.signature) as never);
+      valid = Keypair.fromPublicKey(data.walletAddress).verifyMessage(message, base64ToBytes(data.signature));
     } catch {
       valid = false;
     }
