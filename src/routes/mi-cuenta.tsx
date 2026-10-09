@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { NetworkNotice, WalletButton } from "@/components/WalletButton";
 import { useWallet } from "@/lib/wallet";
 import { KYC_LABELS } from "@/lib/kyc";
+import { getClaims } from "@/lib/claim";
 import { horizon, loadDeRaizBalances, loadTransactions, type TokenBalance, type TxRecord } from "@/lib/stellar";
 import { explorerAccount, explorerTx, shortAddress } from "@/config/assets";
 
@@ -38,6 +39,7 @@ const statusTone: Record<string, string> = {
 function MiCuenta() {
   const { address, kycStatus, isTestnet } = useWallet();
   const [balances, setBalances] = useState<TokenBalance[]>([]);
+  const [claims, setClaims] = useState<Awaited<ReturnType<typeof getClaims>>>([]);
   const [txs, setTxs] = useState<TxRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -46,6 +48,7 @@ function MiCuenta() {
   useEffect(() => {
     if (!address) {
       setBalances([]);
+      setClaims([]);
       setTxs([]);
       setXlm(null);
       return;
@@ -56,6 +59,9 @@ function MiCuenta() {
       .catch(() => setXlm(null));
     setLoading(true);
     setNotice(null);
+    getClaims(address)
+      .then(setClaims)
+      .catch(() => setClaims([]));
     Promise.all([loadDeRaizBalances(address), loadTransactions(address)])
       .then(([b, t]) => {
         setBalances(b);
@@ -156,7 +162,11 @@ function MiCuenta() {
                   </span>
                   <span className="font-mono text-sm text-foreground">{b.balance}</span>
                   <span className={`text-xs ${b.authorized ? "text-leaf" : "text-muted-foreground"}`}>
-                    {b.authorized ? "Habilitada" : "Bloqueada · esperando habilitación del emisor"}
+                    {b.authorized
+                      ? "Habilitada"
+                      : claims.some((c) => c.asset_code === b.assetCode)
+                        ? "Revocada por el emisor"
+                        : "Bloqueada · esperando habilitación del emisor"}
                   </span>
                 </li>
               ))}

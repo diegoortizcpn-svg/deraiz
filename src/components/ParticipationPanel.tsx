@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useWallet } from "@/lib/wallet";
 import { KYC_LABELS, RETRYABLE, startKyc } from "@/lib/kyc";
-import { buildTrustlineXdr, hasTrustline, submitSignedXdr } from "@/lib/stellar";
+import { buildTrustlineXdr, hasTrustline, loadDeRaizBalances, submitSignedXdr } from "@/lib/stellar";
 import { claimTokens, getClaims } from "@/lib/claim";
 import { CLAIM_AMOUNT, explorerTx, shortAddress } from "@/config/assets";
 import { NetworkNotice, WalletButton } from "@/components/WalletButton";
@@ -41,6 +41,7 @@ function Step({ n, title, done, enabled, children }: StepProps) {
 export function ParticipationPanel({ project }: { project: Project }) {
   const { address, isTestnet, kycStatus, setKycStatus, sign } = useWallet();
   const [trustline, setTrustline] = useState(false);
+  const [balanceInfo, setBalanceInfo] = useState<{ authorized: boolean; balance: string } | null>(null);
   const [claimed, setClaimed] = useState(false);
   const [claimHash, setClaimHash] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
@@ -49,11 +50,18 @@ export function ParticipationPanel({ project }: { project: Project }) {
   useEffect(() => {
     if (!address) {
       setTrustline(false);
+      setBalanceInfo(null);
       setClaimed(false);
       setClaimHash(null);
       return;
     }
     hasTrustline(address, project.assetCode).then(setTrustline).catch(() => setTrustline(false));
+    loadDeRaizBalances(address)
+      .then((balances) => {
+        const b = balances.find((x) => x.assetCode === project.assetCode);
+        setBalanceInfo(b ? { authorized: b.authorized, balance: b.balance } : null);
+      })
+      .catch(() => setBalanceInfo(null));
     getClaims(address)
       .then((claims) => {
         const c = claims.find((x) => x.asset_code === project.assetCode);
@@ -201,6 +209,15 @@ export function ParticipationPanel({ project }: { project: Project }) {
           {claimed && (
             <p className="mt-2 text-leaf">
               ¡Listo! Recibiste {CLAIM_AMOUNT} {project.assetCode} de prueba.
+            </p>
+          )}
+          {claimed && balanceInfo && !balanceInfo.authorized && (
+            <p className="mt-2 rounded-full bg-destructive/10 px-3 py-1.5 text-xs text-destructive">
+              Estado actual en la red: el emisor revocó la habilitación. Saldo actual:{" "}
+              <span className="font-mono">
+                {balanceInfo.balance} {project.assetCode}
+              </span>
+              .
             </p>
           )}
           {claimed && claimHash && (
