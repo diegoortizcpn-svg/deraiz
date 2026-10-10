@@ -243,6 +243,7 @@ El archivo `.env` incluido contiene solo datos públicos de Supabase (URL y clav
 - DeRaíz no vincula wallets con personas: la detección de duplicados depende de Didit. Probado en testnet: una segunda wallet verificada con el mismo rostro quedó **en revisión** ("Rostro duplicado").
 - Una sesión en revisión queda así hasta que alguien con acceso a la consola de Didit la resuelve. El usuario solo ve "En revisión"; no hay todavía un proceso de soporte ni un plazo, y DeRaíz no registra esa decisión.
 - Una wallet en revisión puede reiniciar su verificación firmando de nuevo (el estado vuelve a "Not Started"); no hay todavía bloqueo de reintentos ni límite de pedidos de códigos de firma.
+- Dependencias: el escáner de Lovable reporta problemas conocidos en paquetes del framework (TanStack Start y router) y de herramientas de build. No se actualizaron antes de la entrega para no alterar el flujo probado; se revisarán después del hackathon.
 
 ---
 
