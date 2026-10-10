@@ -58,6 +58,18 @@ El emisor conserva dos herramientas de corrección on-chain: **revocar** la habi
 
 ---
 
+## Qué se agregó para Find Your Way
+
+Mejoras sobre la primera versión, cada una con su evidencia:
+
+- **Prueba de propiedad de la wallet (SEP-53):** el participante firma con Freighter un mensaje con un código de un solo uso (vence en 5 minutos) antes de iniciar la verificación de identidad y antes de reclamar. Se verifica en el servidor. No es una transacción y no tiene costo.
+- **Revocación y clawback demostrados:** sobre `MIEL`, el emisor revocó la habilitación, la red rechazó un pago a la trustline revocada y el emisor recuperó los tokens (filas 5 a 9 de la evidencia). *Mi cuenta* muestra "Revocada por el emisor".
+- **Una persona, una wallet:** la regla de rostro duplicado de Didit pasó de aprobar a revisar. Con una segunda wallet y el mismo rostro, la verificación quedó **en revisión** y la web no habilita el reclamo; el servidor rechaza todo estado distinto de Aprobado.
+- **Reclamo con firma:** el reclamo exige la misma firma de propiedad (fila 10).
+- **Escaneo de seguridad:** se corrió el escáner de Lovable. Lo que no se corrigió está declarado en "Límites conocidos".
+
+---
+  
 ## Arquitectura
 
 ```mermaid
@@ -146,6 +158,7 @@ sequenceDiagram
 | 7 | **El emisor revoca la habilitación** de la trustline `MIEL` (`SetTrustLineFlags`, `clear_flags: 1`) | [`87ee6ea5818ae6c96223a4590c23625d90c797fe7ae7413420e49f5fec630f06`](https://stellar.expert/explorer/testnet/tx/87ee6ea5818ae6c96223a4590c23625d90c797fe7ae7413420e49f5fec630f06) |
 | 8 | **La red rechaza** un pago de 1 `MIEL` del emisor a la trustline revocada (`tx_failed` / `op_not_authorized`) | [`992706f425d1063efb9662547075a10eb6e08e85d52f59050c1b73be4347cde4`](https://stellar.expert/explorer/testnet/tx/992706f425d1063efb9662547075a10eb6e08e85d52f59050c1b73be4347cde4) |
 | 9 | **El emisor recupera los 10 `MIEL`** con `Clawback` (saldo a 0) | [`82cd6ae0fcf9776fe023e0481fcce6d21b17fee5c78135bc099c0aa3c3d14cb6`](https://stellar.expert/explorer/testnet/tx/82cd6ae0fcf9776fe023e0481fcce6d21b17fee5c78135bc099c0aa3c3d14cb6) |
+| 10 | Reclamo de 10 `PISTA` tras la firma de propiedad de la wallet (SEP-53, verificada en el servidor): habilitación + envío en una transacción | [`ad3cfba6b7a26bb25f9c662f40386fa2de5daa70cf12e6da385a07824a7d74d6`](https://stellar.expert/explorer/testnet/tx/ad3cfba6b7a26bb25f9c662f40386fa2de5daa70cf12e6da385a07824a7d74d6) |
 
 Estado resultante de la trustline del participante, según Horizon:
 
@@ -245,6 +258,7 @@ El archivo `.env` incluido contiene solo datos públicos de Supabase (URL y clav
 - Una wallet en revisión puede reiniciar su verificación firmando de nuevo (el estado vuelve a "Not Started"); no hay todavía bloqueo de reintentos ni límite de pedidos de códigos de firma.
 - Dependencias: el escáner de Lovable reporta problemas conocidos en paquetes del framework (TanStack Start y router) y de herramientas de build. No se actualizaron antes de la entrega para no alterar el flujo probado; se revisarán después del hackathon.
 - Tras reclamar, la ficha del proyecto puede mostrar un aviso desactualizado ("el emisor revocó la habilitación") hasta recargar la página, porque no vuelve a leer la red; el estado real se ve en Mi cuenta y en el explorador.
+- La consulta del historial de reclamos y la del estado KYC no exigen firma de la wallet: cualquiera que conozca una dirección puede ver qué tokens de prueba reclamó o en qué estado está su verificación. Los reclamos son públicos en Stellar de todos modos; se corregirá después del hackathon exigiendo la firma SEP-53 también en esas consultas.
 
 ---
 
