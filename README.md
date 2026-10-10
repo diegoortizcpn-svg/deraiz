@@ -261,6 +261,11 @@ El archivo `.env` incluido contiene solo datos públicos de Supabase (URL y clav
 | `src/routes/api/public/didit-webhook.ts` | Webhook de Didit con verificación de firma |
 | `src/lib/claim.*.ts` | Reclamo: validaciones + habilitación + envío firmado por el emisor |
 | `supabase/migrations/` | Tablas y políticas de seguridad de la primera versión |
+| `test/` | Pruebas de la firma de propiedad y de las validaciones (carpeta independiente, con su propio `package.json`) |
+
+### Pruebas
+
+`cd test && npm install && npm test`: 20 pruebas de la firma de propiedad (SEP-53) y de las validaciones del servidor. Verifican la lógica con casos de ataque (código distinto, firma de otra wallet, firma sin prefijo, basura); no cubren el reclamo, el webhook ni la base de datos.
 
 ---
 
