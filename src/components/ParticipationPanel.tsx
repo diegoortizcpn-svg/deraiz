@@ -115,7 +115,7 @@ export function ParticipationPanel({ project }: { project: Project }) {
     if (!address) return;
     setBusy("claim");
     try {
-      const res = await claimTokens(address, project.assetCode);
+      const res = await claimTokens(address, project.assetCode, signMessage);
       if (res.ok) {
         setClaimed(true);
         setClaimHash(res.txHash ?? null);
@@ -123,6 +123,9 @@ export function ParticipationPanel({ project }: { project: Project }) {
       } else {
         toast.error(res.message);
       }
+    } catch (e) {
+      if (e instanceof WalletSignError) toast.error("No se pudo firmar con la wallet.");
+      else toast.error(e instanceof Error ? e.message : "No se pudo reclamar.");
     } finally {
       setBusy(null);
     }
