@@ -244,6 +244,7 @@ El archivo `.env` incluido contiene solo datos públicos de Supabase (URL y clav
 - Una sesión en revisión queda así hasta que alguien con acceso a la consola de Didit la resuelve. El usuario solo ve "En revisión"; no hay todavía un proceso de soporte ni un plazo, y DeRaíz no registra esa decisión.
 - Una wallet en revisión puede reiniciar su verificación firmando de nuevo (el estado vuelve a "Not Started"); no hay todavía bloqueo de reintentos ni límite de pedidos de códigos de firma.
 - Dependencias: el escáner de Lovable reporta problemas conocidos en paquetes del framework (TanStack Start y router) y de herramientas de build. No se actualizaron antes de la entrega para no alterar el flujo probado; se revisarán después del hackathon.
+- Tras reclamar, la ficha del proyecto puede mostrar un aviso desactualizado ("el emisor revocó la habilitación") hasta recargar la página, porque no vuelve a leer la red; el estado real se ve en Mi cuenta y en el explorador.
 
 ---
 
