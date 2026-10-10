@@ -46,6 +46,7 @@ type WalletState = {
   available: boolean | null;
   error: string | null;
   kycStatus: KycStatus;
+  kycLoading: boolean;
   connect: () => Promise<void>;
   disconnect: () => void;
   refreshKyc: () => Promise<void>;
@@ -63,6 +64,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [available, setAvailable] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [kycStatus, setKycStatus] = useState<KycStatus>("Not Started");
+  const [kycLoading, setKycLoading] = useState(false);
 
   const readNetwork = useCallback(async () => {
     const res = await (await freighter()).getNetwork();
@@ -96,14 +98,21 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!address) {
       setKycStatus("Not Started");
+      setKycLoading(false);
       return;
     }
+    // Mientras llega la primera respuesta del estado, el panel muestra «Consultando estado…».
+    setKycLoading(true);
+    let active = true;
     const load = () => getKycStatus(address).then(setKycStatus).catch(() => {});
-    load();
+    load().finally(() => {
+      if (active) setKycLoading(false);
+    });
     const onVis = () => document.visibilityState === "visible" && load();
     document.addEventListener("visibilitychange", onVis);
     window.addEventListener("focus", onVis);
     return () => {
+      active = false;
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("focus", onVis);
     };
@@ -193,6 +202,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         available,
         error,
         kycStatus,
+        kycLoading,
         connect,
         disconnect,
         refreshKyc,
