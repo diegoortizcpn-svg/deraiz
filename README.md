@@ -238,13 +238,21 @@ El archivo `.env` incluido contiene solo datos públicos de Supabase (URL y clav
 
 ---
 
+## Límites conocidos
+
+- DeRaíz no vincula wallets con personas: la detección de duplicados depende de Didit. Probado en testnet: una segunda wallet verificada con el mismo rostro quedó **en revisión** ("Rostro duplicado").
+- Una sesión en revisión queda así hasta que alguien con acceso a la consola de Didit la resuelve. El usuario solo ve "En revisión"; no hay todavía un proceso de soporte ni un plazo, y DeRaíz no registra esa decisión.
+- Una wallet en revisión puede reiniciar su verificación firmando de nuevo (crea una sesión nueva en Didit); no hay todavía bloqueo de reintentos ni límite de pedidos.
+
+---
+
 ## Hoja de ruta
 
 Lo siguiente **no forma parte de lo construido**; es la evolución prevista:
 
 1. **Emisor con multisig:** eliminar el riesgo de una clave única del emisor.
 2. **Hitos on-chain con Soroban:** un contrato que registre hitos productivos certificados por un validador independiente (plantación, cosecha). La versión actual usa activos clásicos con flags de autorización.
-3. **Prueba de propiedad de la wallet:** que el participante firme un mensaje con Freighter antes del KYC, para asegurar que la wallet verificada es suya.
+3. **Cambio de wallet (una persona, una wallet):** la persona pide el cambio a soporte (la propiedad de la nueva wallet ya está probada con la firma SEP-53). El emisor **revoca** la wallet anterior y **recupera su saldo con clawback** (los tokens se queman); recién entonces se aprueba la nueva verificación, y el emisor habilita la nueva wallet y emite el mismo saldo. Como esas operaciones las firma el emisor, podrían ejecutarse en una sola transacción atómica (no probado).
 4. **Pilotos con productores reales** en Perú y Argentina, con validación de hitos en campo.
 5. **Marco regulatorio:** operación bajo la normativa de cada país antes de cualquier uso productivo.
 
