@@ -152,6 +152,11 @@ export function ParticipationPanel({ project }: { project: Project }) {
           <p>
             Estado: <strong className="text-foreground">{KYC_LABELS[kycStatus]}</strong>
           </p>
+          {kycStatus === "In Review" && (
+            <p className="mt-1 text-xs">
+              Tu verificación quedó en revisión manual. No podés crear la trustline ni reclamar hasta que se resuelva.
+            </p>
+          )}
           {address && canStartKyc && (
             <>
               <button
