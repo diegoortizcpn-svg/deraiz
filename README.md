@@ -122,6 +122,12 @@ sequenceDiagram
     B->>S: SetTrustLineFlags(authorized) + Payment(10), firma el emisor
     S-->>U: Trustline HABILITADA + 10 tokens
 ```
+### Qué queda fuera de la cadena (KYC)
+
+- **En Didit:** documento, selfie, prueba de vida y comparación facial. DeRaíz no guarda imágenes ni datos del documento: de la respuesta de Didit solo conserva el estado.
+- **En la base de DeRaíz:** la wallet, el ID de la sesión de Didit, el estado y la fecha de la prueba de propiedad (`kyc_verifications`), y los códigos de firma de un solo uso (`wallet_challenges`).
+- **En Stellar:** solo la habilitación de la trustline y los pagos del emisor. Ningún dato personal se escribe en la cadena.
+- **Vínculo entre las dos capas:** la sesión de Didit se crea con la dirección de la wallet como referencia (`vendor_data`); el resultado del KYC queda asociado a una wallet, no a una cuenta de usuario.
 
 ---
 
