@@ -39,7 +39,7 @@ El emisor conserva dos herramientas de corrección on-chain: **revocar** la habi
 
 ---
 
-## Qué se construyó en Stellar Odyssey Perú Septiembre 2026
+## Qué se construyó en Stellar Odyssey Perú (Septiembre 2026)
 
 | Componente | Estado |
 |---|---|
@@ -105,17 +105,21 @@ sequenceDiagram
     participant S as Stellar Testnet
 
     U->>W: Conecta wallet (testnet)
-    W->>B: create-kyc-session(wallet)
+    W->>B: createWalletChallenge(wallet)
+    B-->>W: Código de un solo uso (vence en 5 min)
+    U->>W: Firma el mensaje (SEP-53, sin costo)
+    W->>B: createKycSession(wallet, código, firma)
+    B->>B: Verifica la firma y marca el código como usado
     B->>D: POST /v3/session (vendor_data = wallet)
     D-->>U: Página de verificación
     U->>D: Documento + selfie
-    D->>B: Webhook firmado (Approved)
+    D->>B: Webhook firmado (Approved / In Review)
     B->>B: Verifica firma HMAC y guarda estado
     U->>S: ChangeTrust al token (firma el usuario) → trustline BLOQUEADA
-    U->>W: Reclamar 10 tokens
-    W->>B: claim-tokens(wallet, activo)
-    B->>B: Verifica KYC "Approved" en el servidor + trustline + reclamo único
-    B->>S: SetTrustLineFlags(authorized) + Payment(10) — firma el emisor
+    U->>W: Reclamar 10 tokens (nueva firma SEP-53)
+    W->>B: claimTokens(wallet, activo, código, firma)
+    B->>B: Verifica firma + KYC "Approved" + trustline + reclamo único
+    B->>S: SetTrustLineFlags(authorized) + Payment(10), firma el emisor
     S-->>U: Trustline HABILITADA + 10 tokens
 ```
 
@@ -290,8 +294,8 @@ Lo siguiente **no forma parte de lo construido**; es la evolución prevista:
 
 | Integrante | Rol | GitHub |
 |---|---|---|
-| Diego J. Ortiz | Estructuración, desarrollo, integración y pitch (web, Stellar, Didit y contrato de hitos) | [@diegoortizcpn-svg](https://github.com/diegoortizcpn-svg) |
-| Jean Nuñez | Estructuración, desarrollo, integración y contrato Soroban de hitos | [@JCNP-Dev](https://github.com/JCNP-Dev) |
+| Diego J. Ortiz | Estructuración, desarrollo, integración y pitch (web, Stellar y Didit) | [@diegoortizcpn-svg](https://github.com/diegoortizcpn-svg) |
+| Jean Nuñez | Estructuración, desarrollo y contrato Soroban de hitos (en desarrollo) | [@JCNP-Dev](https://github.com/JCNP-Dev) |
 
 ## Librerías de terceros
 
