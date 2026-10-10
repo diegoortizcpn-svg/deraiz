@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Trazabilidad de producción agrícola de Latinoamérica con compliance nativo en Stellar</b><br/>
-  Stellar Odyssey Perú · Track 3: Real-World Assets &amp; Compliant Rails
+  Stellar Odyssey Perú · Track 3: Real-World Assets &amp; Compliant Rails<br/>Ampliado para Find Your Way · Stellar Passport, General Track
 </p>
 
 <p align="center">
@@ -29,17 +29,17 @@ En la mayoría de las plataformas ese control vive en la web o en una base de da
 
 DeRaíz demuestra un **riel de compliance de punta a punta** donde la regla la hace cumplir **la propia red Stellar**, no la página web:
 
-1. El participante conecta su wallet (**Freighter**, no custodial).
+1. El participante conecta su wallet (**Freighter**, no custodial) y **firma un mensaje** de un solo uso para probar que es suya (SEP-53, sin costo).
 2. Verifica su identidad con **Didit** (documento + prueba de vida + coincidencia facial).
 3. Didit avisa el resultado por **webhook firmado**; el backend lo valida.
 4. El participante abre una **trustline** al token del proyecto: queda **bloqueada**, porque el emisor tiene activado `AUTH_REQUIRED`.
-5. Solo si el KYC está aprobado, el **emisor habilita la trustline y envía 10 tokens** en una única transacción.
+5. Solo si el KYC está aprobado y la wallet vuelve a firmar, el **emisor habilita la trustline y envía 10 tokens** en una única transacción.
 
 El emisor conserva dos herramientas de corrección on-chain: **revocar** la habilitación (`AUTH_REVOCABLE`) y **recuperar** tokens (`AUTH_CLAWBACK_ENABLED`).
 
 ---
 
-## Qué se construyó durante la ventana del evento
+## Qué se construyó en Stellar Odyssey Perú Septiembre 2026
 
 | Componente | Estado |
 |---|---|
@@ -81,7 +81,7 @@ flowchart LR
     W -->|funciones de servidor| B[Backend<br/>Supabase + server functions]
     B -->|crea sesión KYC| D[Didit]
     D -->|webhook firmado HMAC| B
-    B -->|guarda estados y reclamos| DB[(Postgres<br/>kyc_verifications<br/>token_claims)]
+    B -->|guarda estados y reclamos| DB[(Postgres<br/>kyc_verifications<br/>token_claims<br/>wallet_challenges)]
     B -->|firma como emisor:<br/>SetTrustLineFlags + Payment| H
     H --- S[Stellar Testnet<br/>emisor con flags de compliance]
 ```
@@ -154,7 +154,7 @@ sequenceDiagram
 | 1 | Activación de los flags de compliance en el emisor (`set_flags: 11`) | [`86f0f580380b126b610085a1f3f7fd9064522d94829813d8f577726069173803`](https://stellar.expert/explorer/testnet/tx/86f0f580380b126b610085a1f3f7fd9064522d94829813d8f577726069173803) |
 | 2 | El participante crea su trustline a `FRAMB` (queda bloqueada) | [`ca1bb44bd7891066b48dbd16fda199c7c628afb786d2f184ef303bc8dd7df353`](https://stellar.expert/explorer/testnet/tx/ca1bb44bd7891066b48dbd16fda199c7c628afb786d2f184ef303bc8dd7df353) |
 | 3 | **Tras el KYC aprobado, el emisor habilita la trustline y envía 10 `FRAMB`** (2 operaciones, 1 transacción) | [`5d4df96f30ca828a0caf3d0014a92fa98a57c264e158c7e59e3073c7a72e1d01`](https://stellar.expert/explorer/testnet/tx/5d4df96f30ca828a0caf3d0014a92fa98a57c264e158c7e59e3073c7a72e1d01) |
-| 4 | El mismo flujo con `HONGO` (el que muestra el video demo): habilitación + envío de 10 tokens en una transacción | [`a8d76860ff91c2636e8d329bc761099201661e8418760fc3806da91ddbe7ddcc`](https://stellar.expert/explorer/testnet/tx/a8d76860ff91c2636e8d329bc761099201661e8418760fc3806da91ddbe7ddcc) |
+| 4 | El mismo flujo con `HONGO` (el que muestra el video de la primera versión): habilitación + envío de 10 tokens en una transacción | [`a8d76860ff91c2636e8d329bc761099201661e8418760fc3806da91ddbe7ddcc`](https://stellar.expert/explorer/testnet/tx/a8d76860ff91c2636e8d329bc761099201661e8418760fc3806da91ddbe7ddcc) |
 | 5 | El participante crea su trustline a `MIEL` (queda bloqueada) | [`c3a91febf6057c4f7ce4588de53e3a56e55ddd4adabc11006f402718d7117c23`](https://stellar.expert/explorer/testnet/tx/c3a91febf6057c4f7ce4588de53e3a56e55ddd4adabc11006f402718d7117c23) |
 | 6 | Tras el KYC aprobado, el emisor habilita la trustline y envía 10 `MIEL` (2 operaciones, 1 transacción) | [`6461cb59767f9c14671541a2a169a7ed220556140c08d7cbf31c3800f84863ac`](https://stellar.expert/explorer/testnet/tx/6461cb59767f9c14671541a2a169a7ed220556140c08d7cbf31c3800f84863ac) |
 | 7 | **El emisor revoca la habilitación** de la trustline `MIEL` (`SetTrustLineFlags`, `clear_flags: 1`) | [`87ee6ea5818ae6c96223a4590c23625d90c797fe7ae7413420e49f5fec630f06`](https://stellar.expert/explorer/testnet/tx/87ee6ea5818ae6c96223a4590c23625d90c797fe7ae7413420e49f5fec630f06) |
@@ -194,7 +194,7 @@ Estado final de la trustline `MIEL`, según Horizon:
 
 - **Costos:** revocación, pago rechazado y clawback costaron 0,00001 XLM cada uno. El pago rechazado también paga comisión, porque entra al ledger como transacción fallida.
 - **Fuente de verdad:** Stellar Expert puede listar flags como "quitados" aunque la operación no los haya tocado (la revocación tiene `clear_flags: 1`, solo *authorized*). El estado real se lee en Horizon, que confirma `is_clawback_enabled: true`.
-- **Histórico vs. estado vigente:** la tabla `token_claims` registra que el reclamo se hizo; el estado vigente de la habilitación se consulta en Horizon y la web lo muestra como ‘Revocada por el emisor’.
+- **Histórico vs. estado vigente:** la tabla `token_claims` registra que el reclamo se hizo; el estado vigente de la habilitación se consulta en Horizon y la web lo muestra como "Revocada por el emisor".
 
 ---
 
@@ -206,6 +206,7 @@ Estado final de la trustline `MIEL`, según Horizon:
 - **Nadie puede "aprobarse solo":** las políticas de la base de datos solo permiten escribir estados y reclamos al backend.
 - **Un reclamo por wallet y activo:** restricción única en la base de datos, que también evita reclamos dobles simultáneos.
 - **No custodial:** DeRaíz nunca tiene las claves del participante.
+- **Prueba de propiedad de la wallet:** antes de iniciar el KYC y antes de reclamar, el servidor verifica una firma SEP-53 sobre un código de un solo uso que vence en 5 minutos.
 
 ---
 
@@ -249,7 +250,7 @@ El archivo `.env` incluido contiene solo datos públicos de Supabase (URL y clav
 | `src/lib/kyc.*.ts` | Sesión Didit y consulta de estado |
 | `src/routes/api/public/didit-webhook.ts` | Webhook de Didit con verificación de firma |
 | `src/lib/claim.*.ts` | Reclamo: validaciones + habilitación + envío firmado por el emisor |
-| `supabase/migrations/` | Tablas y políticas de seguridad |
+| `supabase/migrations/` | Tablas y políticas de seguridad de la primera versión |
 
 ---
 
@@ -261,6 +262,9 @@ El archivo `.env` incluido contiene solo datos públicos de Supabase (URL y clav
 - Dependencias: el escáner de Lovable reporta problemas conocidos en paquetes del framework (TanStack Start y router) y de herramientas de build. No se actualizaron antes de la entrega para no alterar el flujo probado; se revisarán después del hackathon.
 - Tras reclamar, la ficha del proyecto puede mostrar un aviso desactualizado ("el emisor revocó la habilitación") hasta recargar la página, porque no vuelve a leer la red; el estado real se ve en Mi cuenta y en el explorador.
 - La consulta del historial de reclamos y la del estado KYC no exigen firma de la wallet: cualquiera que conozca una dirección puede ver qué tokens de prueba reclamó o en qué estado está su verificación. Los reclamos son públicos en Stellar de todos modos; se corregirá después del hackathon exigiendo la firma SEP-53 también en esas consultas.
+- Esquema incompleto en el repo: la tabla `wallet_challenges` y la columna `ownership_verified_at` (prueba de propiedad) se crearon desde Lovable y todavía no tienen archivo en `supabase/migrations/`. Quien ejecute el proyecto con una base propia tiene que crearlas antes de usar la verificación.
+- Las wallets verificadas antes de agregar la firma de propiedad (como la cuenta de la demo original) no firmaron: su KYC sigue vigente sin prueba de propiedad registrada.
+- Si un revisor aprueba a mano una sesión en Didit, DeRaíz se entera solo por el webhook: la consulta de respaldo a Didit no cubre el estado "En revisión". No se probó una aprobación manual.
 
 ---
 
@@ -273,19 +277,21 @@ Lo siguiente **no forma parte de lo construido**; es la evolución prevista:
 3. **Cambio de wallet (una persona, una wallet):** la persona pide el cambio a soporte (la propiedad de la nueva wallet ya está probada con la firma SEP-53). El emisor **revoca** la wallet anterior y **recupera su saldo con clawback** (los tokens se queman); recién entonces se aprueba la nueva verificación, y el emisor habilita la nueva wallet y emite el mismo saldo. Como esas operaciones las firma el emisor, podrían ejecutarse en una sola transacción atómica (no probado).
 4. **Pilotos con productores reales** en Perú y Argentina, con validación de hitos en campo.
 5. **Marco regulatorio:** operación bajo la normativa de cada país antes de cualquier uso productivo.
+6. **Panel de administración del emisor:** revocar y recuperar tokens desde la app; hoy se hace desde Stellar Laboratory.
+7. **SEP-8 (activos regulados):** que un servidor de aprobación del emisor apruebe cada transacción del token, además de la habilitación de la trustline.
 
 ---
 
 ## Video demo
 
-🎥 [Ver el video demo en YouTube](https://www.youtube.com/watch?v=gpWHHc6ZjRI)
+🎥 [Video de la primera versión (Stellar Odyssey)](https://www.youtube.com/watch?v=gpWHHc6ZjRI) · Video de Find Your Way: *pendiente*.
 
 ## Equipo
 
 | Integrante | Rol | GitHub |
 |---|---|---|
-| Diego J. Ortiz | Estructuración, desarrollo e integración | [@diegoortizcpn-svg](https://github.com/diegoortizcpn-svg) |
-| Jean Nuñez | Estructuración y pitch | *[@JCNP-Dev](https://github.com/JCNP-Dev)* |
+| Diego J. Ortiz | Estructuración, desarrollo, integración y pitch (web, Stellar, Didit y contrato de hitos) | [@diegoortizcpn-svg](https://github.com/diegoortizcpn-svg) |
+| Jean Nuñez | Estructuración, desarrollo, integración y contrato Soroban de hitos | [@JCNP-Dev](https://github.com/JCNP-Dev) |
 
 ## Librerías de terceros
 
