@@ -39,7 +39,7 @@ function Step({ n, title, done, enabled, children }: StepProps) {
 }
 
 export function ParticipationPanel({ project }: { project: Project }) {
-  const { address, isTestnet, kycStatus, setKycStatus, sign, signMessage } = useWallet();
+  const { address, isTestnet, kycStatus, kycLoading, setKycStatus, sign, signMessage } = useWallet();
   const [kycUrl, setKycUrl] = useState<string | null>(null);
   const [trustline, setTrustline] = useState(false);
   const [balanceInfo, setBalanceInfo] = useState<{ authorized: boolean; balance: string } | null>(null);
@@ -149,38 +149,59 @@ export function ParticipationPanel({ project }: { project: Project }) {
         </Step>
 
         <Step n={2} title="Verificar identidad" done={approved} enabled={Boolean(address)}>
-          <p>
-            Estado: <strong className="text-foreground">{KYC_LABELS[kycStatus]}</strong>
-          </p>
-          {kycStatus === "In Review" && (
-            <p className="mt-1 text-xs">
-              Tu verificación quedó en revisión manual. No podés crear la trustline ni reclamar hasta que se resuelva.
-            </p>
-          )}
-          {address && canStartKyc && (
+          {kycLoading ? (
+            <p>Consultando estado…</p>
+          ) : (
             <>
-              <button
-                type="button"
-                onClick={handleKyc}
-                disabled={busy === "kyc"}
-                className="mt-2 rounded-full bg-violet px-4 py-2 text-sm font-medium text-violet-foreground transition hover:brightness-110 disabled:opacity-60"
-              >
-                {busy === "kyc" ? "Iniciando…" : "Firmar y verificar identidad"}
-              </button>
-              <p className="mt-2 text-xs">
-                Primero firmás un mensaje con Freighter para probar que la wallet es tuya. No es una transacción y no tiene costo.
+              <p>
+                Estado: <strong className="text-foreground">{KYC_LABELS[kycStatus]}</strong>
               </p>
+              {kycStatus === "In Review" && (
+                <p className="mt-1 text-xs">
+                  Tu verificación quedó en revisión manual. No podés crear la trustline ni reclamar hasta que se resuelva.
+                </p>
+              )}
+              {kycStatus === "In Progress" && (
+                <>
+                  <p className="mt-1 text-xs">
+                    Si cerraste la verificación de Didit sin terminarla, podés empezar de nuevo.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleKyc}
+                    disabled={busy === "kyc"}
+                    className="mt-2 rounded-full bg-violet px-4 py-2 text-sm font-medium text-violet-foreground transition hover:brightness-110 disabled:opacity-60"
+                  >
+                    {busy === "kyc" ? "Iniciando…" : "Volver a firmar y verificar"}
+                  </button>
+                </>
+              )}
+              {address && canStartKyc && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleKyc}
+                    disabled={busy === "kyc"}
+                    className="mt-2 rounded-full bg-violet px-4 py-2 text-sm font-medium text-violet-foreground transition hover:brightness-110 disabled:opacity-60"
+                  >
+                    {busy === "kyc" ? "Iniciando…" : "Firmar y verificar identidad"}
+                  </button>
+                  <p className="mt-2 text-xs">
+                    Primero firmás un mensaje con Freighter para probar que la wallet es tuya. No es una transacción y no tiene costo.
+                  </p>
+                </>
+              )}
+              {address && kycUrl && !approved && (
+                <a
+                  href={kycUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-block rounded-full border border-violet px-4 py-2 text-sm font-medium text-violet transition hover:bg-violet/10"
+                >
+                  Abrir verificación en Didit
+                </a>
+              )}
             </>
-          )}
-          {address && kycUrl && !approved && (
-            <a
-              href={kycUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 inline-block rounded-full border border-violet px-4 py-2 text-sm font-medium text-violet transition hover:bg-violet/10"
-            >
-              Abrir verificación en Didit
-            </a>
           )}
         </Step>
 
