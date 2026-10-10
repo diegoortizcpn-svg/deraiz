@@ -118,14 +118,38 @@ function CompliancePage() {
           <p className="mt-6 text-sm text-muted-foreground">
             El emisor habilita únicamente wallets con KYC aprobado. Podés auditar cada transacción en{" "}
             <a
-              href={EXPLORER_URL}
+              href={explorerAccount(ISSUER)}
               target="_blank"
               rel="noreferrer"
               className="text-violet underline"
             >
-              stellar.expert (testnet)
+              cuenta del emisor en stellar.expert (testnet)
             </a>
             .
+          </p>
+        </section>
+      </Reveal>
+
+      <Reveal>
+        <section className="mt-6 rounded-3xl bg-card p-8 shadow-soft">
+          <h2 className="text-2xl text-foreground">Evidencia on-chain (activo MIEL)</h2>
+          <ul className="mt-6 grid gap-3">
+            {evidence.map((e) => (
+              <li key={e.hash}>
+                <a
+                  href={explorerTx(e.hash)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block rounded-2xl bg-muted p-4 transition hover:bg-violet/10"
+                >
+                  <p className="text-sm text-foreground">{e.label}</p>
+                  <p className="mt-1 break-all font-mono text-xs text-violet underline">{e.hash}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs text-muted-foreground">
+            Stellar Expert puede mostrar como quitados flags que la operación no tocó; el estado real se lee en Horizon.
           </p>
         </section>
       </Reveal>
