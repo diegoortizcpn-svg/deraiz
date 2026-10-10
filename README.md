@@ -60,11 +60,13 @@ El emisor conserva dos herramientas de corrección on-chain: **revocar** la habi
 
 ## Qué se agregó para Find Your Way
 
+**Punto de partida:** la primera versión se presentó en Stellar Odyssey Perú (último commit: `de14989`, 25/09/2026). Todo lo de esta sección se desarrolló después, desde `e9aaee6` (9/10/2026). No hay commits intermedios.
+
 Mejoras sobre la primera versión, cada una con su evidencia:
 
 - **Prueba de propiedad de la wallet (SEP-53):** el participante firma con Freighter un mensaje con un código de un solo uso (vence en 5 minutos) antes de iniciar la verificación de identidad y antes de reclamar. Se verifica en el servidor. No es una transacción y no tiene costo.
 - **Revocación y clawback demostrados:** sobre `MIEL`, el emisor revocó la habilitación, la red rechazó un pago a la trustline revocada y el emisor recuperó los tokens (filas 5 a 9 de la evidencia). *Mi cuenta* muestra "Revocada por el emisor".
-- **Una persona, una wallet:** la regla de rostro duplicado de Didit pasó de aprobar a revisar. Con una segunda wallet y el mismo rostro, la verificación quedó **en revisión** y la web no habilita el reclamo; el servidor rechaza todo estado distinto de Aprobado.
+- **Una persona, una wallet:** la regla de rostro duplicado de Didit pasó de aprobar a revisar. Con una segunda wallet y el mismo rostro, la verificación quedó **en revisión** y la web no habilita el reclamo (probado). El servidor rechaza todo estado distinto de Aprobado (verificado en el código; no se probó una llamada directa al servidor).
 - **Reclamo con firma:** el reclamo exige la misma firma de propiedad (fila 10).
 - **Escaneo de seguridad:** se corrió el escáner de Lovable. Lo que no se corrigió está declarado en "Límites conocidos".
 
@@ -212,10 +214,10 @@ Estado final de la trustline `MIEL`, según Horizon:
 Requisitos: navegador con la extensión [Freighter](https://www.freighter.app), configurada en **Testnet** y con XLM de prueba (Friendbot).
 
 1. Entrar a **https://deraiz.lovable.app** y tocar **Conectar wallet**.
-2. Elegir un proyecto y tocar **Verificar identidad** (Didit).
+2. Elegir un proyecto y tocar **Firmar y verificar identidad**: Freighter pide firmar un mensaje de prueba de propiedad (no es una transacción y no tiene costo) y después se abre la verificación de **Didit**.
 3. Volver a **Mi cuenta** y esperar el estado **Aprobado**.
 4. En el proyecto, **Crear trustline** y firmar en Freighter. En *Mi cuenta* aparece como *Bloqueada*.
-5. **Reclamar 10 tokens de prueba**. La trustline pasa a *Habilitada* y el saldo a 10, con el hash de la transacción.
+5. **Reclamar 10 tokens de prueba**: Freighter pide una firma de propiedad más. La trustline pasa a *Habilitada* y el saldo a 10, con el hash de la transacción. Si la verificación de la wallet está "En revisión" (por ejemplo, por un rostro ya usado en otra wallet), el reclamo no está disponible.
 
 ## Cómo ejecutarlo localmente
 
