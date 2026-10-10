@@ -63,12 +63,12 @@ export const projects: Project[] = [
     crop: "Hongos",
     image: hongosImg,
     summary:
-      "Producción de hongos comestibles y funcionales en ciclos cortos, con hitos validados por un tercero independiente.",
+      "Producción de hongos comestibles y funcionales en ciclos cortos, con hitos ilustrativos.",
     sheet: [
       { label: "Comestibles", value: "Gírgola, shiitake" },
       { label: "Funcionales", value: "Reishi, melena de león" },
       { label: "Duración del ciclo", value: "45 a 90 días" },
-      { label: "Validación", value: "Hitos validados por un tercero independiente" },
+      { label: "Validación", value: "Hitos ilustrativos; validación por un tercero independiente prevista" },
     ],
     testSupply: "3.000 HONGO",
     timeline: [

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/Reveal";
-import { EXPLORER_URL } from "@/config/assets";
+import { explorerAccount, explorerTx, ISSUER } from "@/config/assets";
 
 export const Route = createFileRoute("/compliance")({
   head: () => ({
@@ -24,13 +24,13 @@ export const Route = createFileRoute("/compliance")({
 
 const flow = [
   {
-    title: "1 · Verificación de identidad (Didit)",
-    body: "El participante conecta su wallet e inicia la verificación con Didit. La validación de documentos y la prueba de vida ocurren fuera de la cadena: ningún dato personal se escribe en Stellar.",
+    title: "1 · Prueba de propiedad y verificación de identidad",
+    body: "El participante conecta su wallet y firma un mensaje con Freighter para probar que es suya (no es una transacción y no tiene costo). Después verifica su identidad con Didit: la validación de documentos, la prueba de vida y la comparación facial ocurren fuera de la cadena. Ningún dato personal se escribe en Stellar.",
     chain: false,
   },
   {
     title: "2 · Habilitación de la wallet",
-    body: "Solo cuando el KYC queda aprobado, el emisor autoriza (allow trust) la wallet para el activo del proyecto. Sin esa habilitación, la wallet no puede mantener el token.",
+    body: "Solo cuando el KYC queda aprobado, el emisor autoriza la trustline de la wallet para el activo del proyecto (operación SetTrustLineFlags). Sin esa habilitación, la wallet no puede mantener el token.",
     chain: true,
   },
   {
@@ -47,12 +47,20 @@ const flags = [
   },
   {
     flag: "AUTH_REVOCABLE",
-    text: "La habilitación de una wallet se puede revocar en cualquier momento.",
+    text: "La habilitación de una wallet se puede revocar en cualquier momento. Demostrado en testnet.",
   },
   {
-    flag: "CLAWBACK",
-    text: "El emisor puede recuperar tokens ya entregados si corresponde.",
+    flag: "AUTH_CLAWBACK_ENABLED",
+    text: "El emisor puede recuperar tokens ya entregados. Demostrado en testnet.",
   },
+];
+
+const evidence = [
+  { label: "Trustline de MIEL (queda bloqueada)", hash: "c3a91febf6057c4f7ce4588de53e3a56e55ddd4adabc11006f402718d7117c23" },
+  { label: "Habilitación y envío de 10 MIEL en una transacción", hash: "6461cb59767f9c14671541a2a169a7ed220556140c08d7cbf31c3800f84863ac" },
+  { label: "Revocación de la habilitación", hash: "87ee6ea5818ae6c96223a4590c23625d90c797fe7ae7413420e49f5fec630f06" },
+  { label: "Pago rechazado por la red (op_not_authorized)", hash: "992706f425d1063efb9662547075a10eb6e08e85d52f59050c1b73be4347cde4" },
+  { label: "Clawback de 10 MIEL (saldo a 0)", hash: "82cd6ae0fcf9776fe023e0481fcce6d21b17fee5c78135bc099c0aa3c3d14cb6" },
 ];
 
 function CompliancePage() {
@@ -110,14 +118,38 @@ function CompliancePage() {
           <p className="mt-6 text-sm text-muted-foreground">
             El emisor habilita únicamente wallets con KYC aprobado. Podés auditar cada transacción en{" "}
             <a
-              href={EXPLORER_URL}
+              href={explorerAccount(ISSUER)}
               target="_blank"
               rel="noreferrer"
               className="text-violet underline"
             >
-              stellar.expert (testnet)
+              cuenta del emisor en stellar.expert (testnet)
             </a>
             .
+          </p>
+        </section>
+      </Reveal>
+
+      <Reveal>
+        <section className="mt-6 rounded-3xl bg-card p-8 shadow-soft">
+          <h2 className="text-2xl text-foreground">Evidencia on-chain (activo MIEL)</h2>
+          <ul className="mt-6 grid gap-3">
+            {evidence.map((e) => (
+              <li key={e.hash}>
+                <a
+                  href={explorerTx(e.hash)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block rounded-2xl bg-muted p-4 transition hover:bg-violet/10"
+                >
+                  <p className="text-sm text-foreground">{e.label}</p>
+                  <p className="mt-1 break-all font-mono text-xs text-violet underline">{e.hash}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs text-muted-foreground">
+            Stellar Expert puede mostrar como quitados flags que la operación no tocó; el estado real se lee en Horizon.
           </p>
         </section>
       </Reveal>

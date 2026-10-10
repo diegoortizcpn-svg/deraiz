@@ -3,7 +3,7 @@ import { Reveal } from "@/components/Reveal";
 import { ParticipationPanel } from "@/components/ParticipationPanel";
 import { ProjectCard } from "@/components/ProjectCard";
 import { getProject, projects, TOKEN_MEANING } from "@/data/projects";
-import { EXPLORER_URL, ISSUER, isIssuerConfigured } from "@/config/assets";
+import { explorerAsset, ISSUER, isIssuerConfigured } from "@/config/assets";
 
 export const Route = createFileRoute("/proyectos/$slug")({
   loader: ({ params }) => {
@@ -164,9 +164,12 @@ function ProyectoDetalle() {
                 </div>
                 <div>
                   <dt className="text-xs uppercase tracking-wider text-violet-foreground/70">
-                    Supply de prueba
+                    Tope demostrativo
                   </dt>
                   <dd className="mt-1 font-mono">{project.testSupply}</dd>
+                  <dd className="mt-1 text-xs text-violet-foreground/70">
+                    Se emite solo al reclamar: 10 tokens por wallet y por proyecto.
+                  </dd>
                 </div>
                 <div className="sm:col-span-2">
                   <dt className="text-xs uppercase tracking-wider text-violet-foreground/70">
@@ -178,7 +181,7 @@ function ProyectoDetalle() {
                 </div>
               </dl>
               <a
-                href={EXPLORER_URL}
+                href={explorerAsset(project.assetCode)}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-6 inline-flex rounded-full bg-lime px-5 py-2.5 text-sm font-medium text-lime-foreground"

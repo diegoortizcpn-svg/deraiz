@@ -27,33 +27,41 @@ export const Route = createFileRoute("/")({
 
 const steps = [
   { n: "01", title: "Conectá tu wallet Freighter", chain: true },
-  { n: "02", title: "Verificá tu identidad con Didit", chain: false },
+  { n: "02", title: "Firmá un mensaje y verificá tu identidad con Didit", chain: false },
   { n: "03", title: "El emisor habilita tu wallet on-chain", chain: true },
   { n: "04", title: "Reclamá tus tokens de trazabilidad de prueba", chain: true },
 ];
 
 const stellarReasons = [
-  { title: "Comisiones mínimas", body: "Cada registro de trazabilidad cuesta fracciones de centavo." },
-  { title: "Confirmación en segundos", body: "Los hitos quedan asentados casi en el momento." },
+  { title: "Comisiones mínimas", body: "Cada operación del flujo cuesta 0,00001 XLM en testnet." },
+  { title: "Confirmación en segundos", body: "Las operaciones quedan confirmadas en pocos segundos." },
   {
     title: "Compliance nativo",
-    body: "Solo wallets habilitadas por el emisor pueden tener el token, y el emisor puede revocar la habilitación y recuperar tokens.",
+    body: "Solo wallets habilitadas por el emisor pueden tener el token. El emisor puede revocar la habilitación y recuperar tokens, y lo demostramos on-chain en testnet.",
   },
 ];
 
 const metrics = [
   { value: "4", label: "Proyectos ficticios" },
   { value: "2", label: "Países" },
-  { value: "0", label: "Wallets verificadas (testnet)" },
-  { value: "0", label: "Tokens de prueba reclamados" },
+  { value: "3", label: "Controles del emisor, demostrados en testnet" },
+  { value: "4", label: "Activos de prueba con flags de compliance" },
 ];
 
 const roadmap = [
-  { title: "Demo en testnet", detail: "Hoy: flujo completo de trazabilidad con tokens de prueba." },
+  {
+    title: "Demo en testnet",
+    detail:
+      "Hoy: prueba de propiedad de la wallet, KYC, habilitación, revocación y clawback demostrados con tokens de prueba.",
+  },
   { title: "Pilotos con productores reales", detail: "Validación en campo de los hitos y registros." },
   {
     title: "Operación bajo el marco regulatorio de cada país",
     detail: "Cumplimiento local antes de cualquier uso productivo.",
+  },
+  {
+    title: "Emisor con multisig y SEP-8",
+    detail: "Reducir el riesgo de clave única y aprobar cada transacción con un servidor del emisor.",
   },
 ];
 
@@ -167,7 +175,7 @@ function Index() {
         <Reveal>
           <h2 className="text-3xl text-foreground sm:text-4xl">Hoja de ruta</h2>
         </Reveal>
-        <ol className="mt-10 grid gap-4 md:grid-cols-3">
+        <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {roadmap.map((r, i) => (
             <Reveal key={r.title} delay={i * 0.08}>
               <li className="h-full rounded-3xl bg-card p-6 shadow-soft">
