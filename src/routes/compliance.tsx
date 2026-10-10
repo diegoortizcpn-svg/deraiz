@@ -25,7 +25,7 @@ export const Route = createFileRoute("/compliance")({
 const flow = [
   {
     title: "1 · Prueba de propiedad y verificación de identidad",
-    body: "El participante conecta su wallet y firma un mensaje con Freighter para probar que es suya (no es una transacción y no tiene costo). Después verifica su identidad con Didit: la validación de documentos, la prueba de vida y la comparación facial ocurren fuera de la cadena. Ningún dato personal se escribe en Stellar.",
+    body: "El participante conecta su wallet y firma un mensaje con Freighter para probar que es suya (no es una transacción y no tiene costo). Después verifica su identidad con Didit: la validación de documentos, la prueba de vida y la comparación facial ocurren fuera de la cadena. Ningún dato personal se escribe en Stellar. Si Didit detecta que el mismo rostro ya se usó en otra wallet, la verificación queda en revisión manual y esa wallet no recibe tokens hasta que se resuelva.",
     chain: false,
   },
   {
@@ -35,7 +35,7 @@ const flow = [
   },
   {
     title: "3 · Emisión de tokens de prueba",
-    body: "Con la wallet habilitada y la trustline creada, el emisor envía los 10 tokens de trazabilidad de prueba. Cada movimiento queda registrado y es verificable en el explorer de testnet.",
+    body: "Con la wallet habilitada y la trustline creada, el emisor envía los 10 tokens de trazabilidad de prueba. Cada movimiento queda registrado y es verificable en el explorer de testnet. El reclamo también exige firmar con la wallet un mensaje de un solo uso que vence en 5 minutos.",
     chain: true,
   },
 ];
