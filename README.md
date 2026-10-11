@@ -89,7 +89,7 @@ flowchart LR
 | Capa | Tecnología | Rol |
 |---|---|---|
 | Frontend | React, TypeScript, TanStack Start, Tailwind, Lovable | Interfaz, conexión de wallet, lectura on-chain |
-| Wallet | Freighter (`@stellar/freighter-api`) | El usuario firma su trustline; DeRaíz nunca tiene sus claves |
+| Wallet | Freighter (`@stellar/freighter-api`) | El usuario firma su trustline y los mensajes de propiedad (SEP-53); DeRaíz nunca tiene sus claves |
 | Stellar | `@stellar/stellar-sdk` + Horizon testnet | Construcción, firma y envío de transacciones |
 | Backend | Supabase (Postgres) + funciones de servidor | KYC, webhook, reclamos; guarda las claves secretas |
 | KYC | Didit | Verificación de identidad alojada + webhook |
