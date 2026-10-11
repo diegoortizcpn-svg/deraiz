@@ -133,7 +133,7 @@ sequenceDiagram
 
 ## Integración con Stellar
 
-**Activos:** cuatro activos clásicos de Stellar emitidos por una única cuenta emisora. 1 token = 1 kg de producción de un lote ficticio.
+**Activos:** cuatro activos clásicos de Stellar emitidos por una única cuenta emisora. Cada token es una **unidad de medida** de la producción trazada (1 token = 1 kg de un lote ficticio): un registro de trazabilidad, **no un derecho**.
 
 | Proyecto (ficticio) | País | Activo |
 |---|---|---|
