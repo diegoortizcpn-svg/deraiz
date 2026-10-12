@@ -317,7 +317,7 @@ Lo siguiente **no forma parte de lo construido**; es la evolución prevista:
 
 ## Video demo
 
-🎥 [Video de la primera versión (Stellar Odyssey)](https://www.youtube.com/watch?v=gpWHHc6ZjRI) · Video de Find Your Way: *pendiente*.
+🎥 [Video pitch · Find Your Way](https://youtu.be/k3AeKNkYAvk)
 
 ## Equipo
 
