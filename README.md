@@ -283,17 +283,35 @@ El archivo `.env` incluido contiene solo datos públicos de Supabase (URL y clav
 
 ---
 
+## Qué representaría el token en una versión real
+
+> Hoy los tokens de DeRaíz son de trazabilidad, en testnet, y no otorgan derechos económicos.
+
+DeRaíz se piensa en dos etapas:
+
+| Etapa | Qué representa el token | Derecho económico | Marco |
+|---|---|---|---|
+| **1. Trazabilidad certificada** (en construcción) | Un certificado de trazabilidad del lote: hitos (siembra, cosecha, entrega) validados por un tercero independiente y registrados on-chain (contrato Soroban en desarrollo) | Ninguno | No es un valor negociable |
+| **2. Financiamiento** (evolución prevista) | Un instrumento de financiamiento para el lote, con derecho a un porcentaje de las ventas de la cosecha. Estamos evaluando qué país de Latinoamérica ofrece el mejor marco para que el proyecto se financie dentro de la normativa vigente | Variable: depende de lo que se venda | A definir según el país elegido, con los estándares técnicos y legales vigentes |
+
+Los certificados de la etapa 1 son la base que hace verificable el derecho de la etapa 2. Los flags de Stellar controlan **quién puede tener** el token; el derecho económico nace del contrato que se defina para el financiamiento.
+
+**Pendiente:** elección del país, contrapartes, estructura legal y regulación aplicable. En esta etapa no hay montos, rendimientos ni oferta de ningún tipo.
+
+---
+
 ## Hoja de ruta
 
 Lo siguiente **no forma parte de lo construido**; es la evolución prevista:
 
 1. **Emisor con multisig:** eliminar el riesgo de una clave única del emisor.
-2. **Hitos on-chain con Soroban:** un contrato que registre hitos productivos certificados por un validador independiente (plantación, cosecha). La versión actual usa activos clásicos con flags de autorización.
+2. **Hitos on-chain con Soroban (etapa 1):** un contrato que registre hitos productivos (siembra, cosecha, entrega) certificados por un validador independiente. Solo trazabilidad: sin pagos ni derechos económicos. La versión actual usa activos clásicos con flags de autorización.
 3. **Cambio de wallet (una persona, una wallet):** la persona pide el cambio a soporte (la propiedad de la nueva wallet ya está probada con la firma SEP-53). El emisor **revoca** la wallet anterior y **recupera su saldo con clawback** (los tokens se queman); recién entonces se aprueba la nueva verificación, y el emisor habilita la nueva wallet y emite el mismo saldo. Como esas operaciones las firma el emisor, podrían ejecutarse en una sola transacción atómica (no probado).
 4. **Pilotos con productores reales** en Perú y Argentina, con validación de hitos en campo.
 5. **Marco regulatorio:** operación bajo la normativa de cada país antes de cualquier uso productivo.
 6. **Panel de administración del emisor:** revocar y recuperar tokens desde la app; hoy se hace desde Stellar Laboratory.
 7. **SEP-8 (activos regulados):** que un servidor de aprobación del emisor apruebe cada transacción del token, además de la habilitación de la trustline.
+8. **Etapa 2, financiamiento:** evaluar el mejor marco regulatorio en Latinoamérica para financiar el proyecto dentro de los estándares técnicos y legales vigentes, según se describe en [Qué representaría el token en una versión real](#qué-representaría-el-token-en-una-versión-real).
 
 ---
 
